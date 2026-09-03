@@ -305,4 +305,8 @@ export const BOOKMARKS = [
  */
 export const PLAYLIST = [
   // { title: "Track Name", artist: "Artist", src: asset("assets/music/track.mp3") },
+  { title: "Don't Dream It's Over", artist: "Crowded House", src: asset("assets/music/Crowded House - Don't Dream It's Over.mp3") },
+  { title: "Always", artist: "Daniel Caesar", src: asset("assets/music/Daniel Caesar - Always.mp3") },
+  { title: "Roses", artist: "The Chainsmokers", src: asset("assets/music/The Chainsmokers - Roses ft. ROZES.mp3") },
+  { title: "love.", artist: "wave to earth", src: asset("assets/music/wave to earth - love..mp3") },
 ];

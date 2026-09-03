@@ -11,6 +11,7 @@ import { OBJECT_COLORS, FALLBACK_COLOR } from "../placeholderArt.js";
 import { DIALOGUE } from "../content.js";
 import { spriteForGid } from "../assets.js";
 import { isUIOpen, isInteractCoolingDown } from "../uiState.js";
+import { onVirtualInteract } from "../touchInput.js";
 import { openDialogue } from "../ui/dialogue.js";
 import { openDesktop } from "../ui/desktop/index.js";
 
@@ -263,4 +264,6 @@ export function setupInteractionSystem(player) {
   };
 
   for (const key of INTERACT_KEYS) k.onKeyPress(key, interact);
+  // The on-screen interact button (touch devices) drives the same handler.
+  onVirtualInteract(interact);
 }

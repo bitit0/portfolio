@@ -229,6 +229,12 @@
   box-shadow: 0 16px 46px rgb(0 0 0 / 62%);
 }
 
+/* `.win { display: flex }` outweighs the UA `[hidden]` rule, so minimizing
+   (which sets el.hidden) needs this to actually hide the window. */
+.win[hidden] {
+  display: none;
+}
+
 .win-bar {
   display: flex;
   align-items: center;
@@ -260,14 +266,23 @@
   color: var(--ink);
 }
 
-.win-close {
+.win-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   flex: none;
+}
+
+.win-min,
+.win-max,
+.win-close {
   display: grid;
   place-items: center;
   width: 1.5rem;
   height: 1.5rem;
+  padding: 0;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1;
   color: var(--ink);
   background: rgb(255 255 255 / 10%);
@@ -276,9 +291,50 @@
   cursor: pointer;
 }
 
+.win-min:hover,
+.win-max:hover {
+  background: rgb(255 255 255 / 22%);
+}
+
 .win-close:hover {
   background: var(--accent);
   color: #fff;
+}
+
+/* --- Minimized-window tray (bottom of the screen) --- */
+
+.win-tray {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  background: rgb(20 20 20 / 82%);
+  border-top: 1px solid rgb(0 0 0 / 45%);
+  pointer-events: auto;
+  z-index: 50;
+}
+
+.win-tray-item {
+  font: inherit;
+  font-size: 0.72rem;
+  color: var(--ink);
+  background: var(--panel-raised);
+  border: 1px solid var(--edge);
+  border-radius: 5px;
+  padding: 0.25rem 0.6rem;
+  max-width: 12rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.win-tray-item:hover {
+  border-color: var(--accent);
 }
 
 .win-body {
@@ -663,6 +719,25 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+}
+
+.media-volume {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto; /* push volume to the right of the transport buttons */
+}
+
+.media-vol {
+  width: 4.5rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.media-mute {
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 0.85rem;
 }
 
 .media-btn {

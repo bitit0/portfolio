@@ -7,6 +7,7 @@ import {
   PLAYER_COLLIDER_SCALE,
 } from "../constants.js";
 import { isUIOpen } from "../uiState.js";
+import { getMove } from "../touchInput.js";
 
 
 /** Half the sprite's height, used for depth sorting against furniture. */
@@ -54,24 +55,37 @@ export function makePlayer(spawn) {
 
     let dx = 0;
     let dy = 0;
+    let facingFromKeys = null;
     for (const entry of MOVE_KEYS) {
       if (entry.keys.some((key) => k.isKeyDown(key))) {
         dx += entry.vec[0];
         dy += entry.vec[1];
-        player.facing = entry.dir;
+        facingFromKeys = entry.dir;
       }
     }
+
+    // The on-screen joystick contributes an analog vector on the same axes.
+    const stick = getMove();
+    dx += stick.x;
+    dy += stick.y;
 
     if (dx === 0 && dy === 0) {
       setAnim(`idle-${player.facing}`);
       return;
     }
 
+    // Keys pick a cardinal facing directly; the joystick's is derived from its
+    // dominant axis so the sprite faces roughly where it is heading.
+    player.facing =
+      facingFromKeys ??
+      (Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? "left" : "right") : dy < 0 ? "up" : "down");
+
     setAnim(`walk-${player.facing}`);
 
-    // Holding a run key speeds movement up without changing the animation rate,
-    // so the walk cycle still reads clearly at either speed.
-    const running = RUN_KEYS.some((key) => k.isKeyDown(key));
+    // Holding a run key — or pushing the joystick to its edge — speeds movement
+    // up without changing the animation rate, so the walk cycle still reads.
+    const running =
+      RUN_KEYS.some((key) => k.isKeyDown(key)) || Math.hypot(stick.x, stick.y) > 0.85;
     const speed = running ? PLAYER_SPEED * RUN_MULTIPLIER : PLAYER_SPEED;
 
     // Normalise so diagonals are not faster than the cardinals.

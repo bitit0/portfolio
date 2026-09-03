@@ -2,10 +2,12 @@ import k from "./kaplayCtx.js";
 import { asset } from "./paths.js";
 import { loadGameAssets } from "./assets.js";
 import { registerRoomScene } from "./scenes/room.js";
+import { mountTouchControls } from "./ui/touchControls.js";
 import "./ui/styles/base.css";
 import "./ui/styles/dialogue.css";
 import "./ui/styles/desktop.css";
 import "./ui/styles/credits.css";
+import "./ui/styles/touch.css";
 
 /**
  * Boot. The map is fetched up front rather than through kaplay's asset loader
@@ -18,6 +20,7 @@ async function main() {
 
   loadGameAssets(map);
   registerRoomScene();
+  mountTouchControls();
 
   // The room CANNOT be built before loading finishes. loadSpriteAtlas only
   // registers its named cuts once the image has decoded, so calling

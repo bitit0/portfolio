@@ -14,8 +14,19 @@ export function createWindowManager(layer) {
   const windows = new Map();
   /** Order of creation, used to decide what Escape closes. */
   const order = [];
+  /** Ids of minimized windows — hidden, but restorable from the tray. */
+  const minimized = new Set();
+  /** Saved geometry for maximized windows, keyed by element. */
+  const restoreRects = new WeakMap();
   let zTop = 100;
   let cascade = 0;
+
+  // Strip along the bottom of the screen holding one button per minimized
+  // window. Hidden until something is minimized, so the desktop stays clean.
+  const tray = document.createElement("div");
+  tray.className = "win-tray";
+  tray.hidden = true;
+  layer.append(tray);
 
   function focus(id) {
     const el = windows.get(id);
@@ -29,15 +40,90 @@ export function createWindowManager(layer) {
     order.push(id);
   }
 
+  /** The topmost window that is not minimized, or undefined if none is showing. */
+  function topVisible() {
+    for (let i = order.length - 1; i >= 0; i--) {
+      if (!minimized.has(order[i])) return order[i];
+    }
+    return undefined;
+  }
+
   function close(id) {
     const el = windows.get(id);
     if (!el) return;
+    teardown(el);
     el.remove();
     windows.delete(id);
+    minimized.delete(id);
     const idx = order.indexOf(id);
     if (idx !== -1) order.splice(idx, 1);
-    const next = order[order.length - 1];
+    renderTray();
+    const next = topVisible();
     if (next) focus(next);
+  }
+
+  function minimize(id) {
+    const el = windows.get(id);
+    if (!el || minimized.has(id)) return;
+    el.hidden = true;
+    minimized.add(id);
+    renderTray();
+    const next = topVisible();
+    if (next) focus(next);
+  }
+
+  function restore(id) {
+    const el = windows.get(id);
+    if (!el) return;
+    el.hidden = false;
+    minimized.delete(id);
+    renderTray();
+    focus(id);
+  }
+
+  /** Toggles a window between filling the screen and its previous geometry. */
+  function toggleMax(id) {
+    const el = windows.get(id);
+    if (!el) return;
+    const saved = restoreRects.get(el);
+    if (saved) {
+      Object.assign(el.style, saved);
+      restoreRects.delete(el);
+      el.classList.remove("is-max");
+    } else {
+      restoreRects.set(el, {
+        left: el.style.left,
+        top: el.style.top,
+        width: el.style.width,
+        height: el.style.height,
+      });
+      Object.assign(el.style, {
+        left: "0px",
+        top: "0px",
+        width: `${layer.clientWidth}px`,
+        height: `${layer.clientHeight}px`,
+      });
+      el.classList.add("is-max");
+    }
+    focus(id);
+  }
+
+  function renderTray() {
+    tray.replaceChildren();
+    for (const id of order) {
+      if (!minimized.has(id)) continue;
+      const el = windows.get(id);
+      if (!el) continue;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "win-tray-item";
+      const icon = el.querySelector(".win-icon")?.textContent ?? "";
+      const name = el.querySelector(".win-name")?.textContent ?? "";
+      btn.textContent = `${icon} ${name}`.trim();
+      btn.addEventListener("click", () => restore(id));
+      tray.append(btn);
+    }
+    tray.hidden = minimized.size === 0;
   }
 
   /**
@@ -53,9 +139,13 @@ export function createWindowManager(layer) {
   function openWindow({ id, title, icon = "", content, width = 460, height = 320 }) {
     const existing = windows.get(id);
     if (existing) {
-      // Swap the body so a re-open reflects fresh content, then just focus.
+      // Swap the body so a re-open reflects fresh content. Tear the old content
+      // down first (e.g. the media player stops its audio) so it doesn't linger.
       const body = existing.querySelector(".win-body");
-      if (body) body.replaceChildren(content);
+      if (body) {
+        callCleanup(body.firstElementChild);
+        body.replaceChildren(content);
+      }
       focus(id);
       return existing;
     }
@@ -71,7 +161,11 @@ export function createWindowManager(layer) {
     el.innerHTML = `
       <header class="win-bar">
         <span class="win-title"><span class="win-icon"></span><span class="win-name"></span></span>
-        <button class="win-close" type="button" aria-label="Close window">×</button>
+        <span class="win-controls">
+          <button class="win-min" type="button" aria-label="Minimize window" title="Minimize">–</button>
+          <button class="win-max" type="button" aria-label="Maximize window" title="Maximize">▢</button>
+          <button class="win-close" type="button" aria-label="Close window" title="Close">×</button>
+        </span>
       </header>
       <div class="win-body"></div>
       <div class="win-resize" aria-hidden="true"></div>
@@ -81,10 +175,21 @@ export function createWindowManager(layer) {
     /** @type {HTMLElement} */ (el.querySelector(".win-name")).textContent = title;
     /** @type {HTMLElement} */ (el.querySelector(".win-body")).append(content);
 
-    el.querySelector(".win-close").addEventListener("click", (e) => {
-      e.stopPropagation();
-      close(id);
+    const onControl = (sel, fn) =>
+      el.querySelector(sel).addEventListener("click", (e) => {
+        e.stopPropagation();
+        fn();
+      });
+    onControl(".win-min", () => minimize(id));
+    onControl(".win-max", () => toggleMax(id));
+    onControl(".win-close", () => close(id));
+
+    // Double-clicking the titlebar maximizes/restores, as on a real desktop.
+    el.querySelector(".win-bar").addEventListener("dblclick", (e) => {
+      if (/** @type {HTMLElement} */ (e.target).closest(".win-controls")) return;
+      toggleMax(id);
     });
+
     el.addEventListener("pointerdown", () => focus(id));
 
     makeDraggable(el, /** @type {HTMLElement} */ (el.querySelector(".win-bar")), layer);
@@ -116,15 +221,19 @@ export function createWindowManager(layer) {
     hasWindows: () => windows.size > 0,
     /** Whether a window with this id is currently open (for dock indicators). */
     isOpen: (id) => windows.has(id),
-    /** Closes the most recently focused window. Returns whether one was closed. */
+    /** Closes the most recently focused *visible* window. Returns whether one
+     *  was closed — so Escape closes windows before leaving the computer, but
+     *  ignores minimized ones sitting in the tray. */
     closeTopWindow() {
-      const id = order[order.length - 1];
+      const id = topVisible();
       if (!id) return false;
       close(id);
       return true;
     },
     closeAll() {
       for (const id of [...windows.keys()]) close(id);
+      minimized.clear();
+      renderTray();
       cascade = 0;
     },
   };
@@ -141,7 +250,8 @@ function makeDraggable(el, handle, bounds) {
   let originY = 0;
 
   handle.addEventListener("pointerdown", (e) => {
-    if (e.target.closest(".win-close")) return;
+    // Let the window-control buttons handle their own clicks.
+    if (e.target.closest(".win-controls")) return;
     e.preventDefault();
     handle.setPointerCapture(e.pointerId);
     startX = e.clientX;
@@ -205,4 +315,18 @@ function makeResizable(el, grip, bounds) {
 
 function clamp(v, lo, hi) {
   return Math.min(Math.max(v, lo), hi);
+}
+
+/**
+ * Runs an app's optional `__cleanup` hook. Apps that hold live resources (the
+ * media player's <audio>, timers, etc.) set it on their root element so the
+ * window manager can release them when the window closes or its body is swapped.
+ */
+function callCleanup(node) {
+  if (node && typeof node.__cleanup === "function") node.__cleanup();
+}
+
+/** Tears down whatever app content a window currently holds. */
+function teardown(winEl) {
+  callCleanup(winEl.querySelector(".win-body")?.firstElementChild);
 }

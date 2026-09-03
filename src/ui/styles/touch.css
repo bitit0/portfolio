@@ -1,0 +1,71 @@
+/* On-screen gamepad for touch devices. Overlaid on the game, below the DOM
+   overlays (which sit at z-index 10). Only mounted on touch devices. */
+
+#touchpad {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none; /* only the interactive bits below catch touches */
+  touch-action: none;
+}
+
+#touchpad.is-hidden {
+  display: none;
+}
+
+/* Left half is the joystick zone: touch anywhere in it to summon the stick. */
+.tp-move {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+/* The stick base is positioned at the touch origin and centered on it. */
+.tp-stick {
+  position: absolute;
+  width: 108px;
+  height: 108px;
+  margin: -54px 0 0 -54px; /* center on the (left, top) origin point */
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  border: 2px solid rgb(255 255 255 / 35%);
+  pointer-events: none;
+}
+
+.tp-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  background: rgb(124 190 220 / 55%);
+  border: 2px solid rgb(255 255 255 / 70%);
+}
+
+.tp-action {
+  position: absolute;
+  right: 6%;
+  bottom: 12%;
+  width: 84px;
+  height: 84px;
+  pointer-events: auto;
+  font-family: inherit;
+  font-size: 1.6rem;
+  color: #fff;
+  background: rgb(124 190 220 / 30%);
+  border: 2px solid rgb(255 255 255 / 55%);
+  border-radius: 50%;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+.tp-action.is-down {
+  background: rgb(124 190 220 / 55%);
+  transform: scale(0.94);
+}

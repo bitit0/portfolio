@@ -5,8 +5,6 @@
  * mean touching a scene or an entity. Adding a new examinable object is:
  *   1. add a rect to the "objects" layer in public/assets/map.json
  *   2. add an entry here under the same name
- *
- * TODO(nathan): everything below is placeholder copy. Replace it.
  */
 
 import { asset } from "./paths.js";
@@ -124,7 +122,6 @@ export const VFS = {
     {
       name: "resume.pdf",
       type: "pdf",
-      // TODO(nathan): drop your resume at public/assets/resume.pdf.
       src: asset("assets/resume.pdf"),
     },
     {
@@ -305,8 +302,8 @@ export const BOOKMARKS = [
  */
 export const PLAYLIST = [
   // { title: "Track Name", artist: "Artist", src: asset("assets/music/track.mp3") },
-  { title: "Don't Dream It's Over", artist: "Crowded House", src: asset("assets/music/Crowded House - Don't Dream It's Over.mp3") },
-  { title: "Always", artist: "Daniel Caesar", src: asset("assets/music/Daniel Caesar - Always.mp3") },
-  { title: "Roses", artist: "The Chainsmokers", src: asset("assets/music/The Chainsmokers - Roses ft. ROZES.mp3") },
-  { title: "love.", artist: "wave to earth", src: asset("assets/music/wave to earth - love..mp3") },
+  { title: "Don't Dream It's Over", artist: "Crowded House", src: asset("assets/music/crowded-house-dont-dream-its-over.mp3") },
+  { title: "Always", artist: "Daniel Caesar", src: asset("assets/music/daniel-caesar-always.mp3") },
+  { title: "Roses", artist: "The Chainsmokers", src: asset("assets/music/the-chainsmokers-roses.mp3") },
+  { title: "love.", artist: "wave to earth", src: asset("assets/music/wave-to-earth-love.mp3") },
 ];

@@ -11,8 +11,9 @@ npm run build    # -> dist/
 npm run preview  # serve the production build
 ```
 
-**Controls:** WASD / arrow keys to move, `E` (or Space / Enter) to examine,
-`Esc` to back out of anything.
+**Controls:** WASD / arrow keys to move, hold `Shift` to run, `F` (or Space /
+Enter) to examine, `Esc` to back out of anything. On touch devices an on-screen
+joystick and interact button appear automatically.
 
 ## Where things live
 
@@ -36,9 +37,11 @@ map object with no dialogue entry logs a warning rather than failing silently.
 ### Adding a file to the computer
 
 Add a node to `VFS` in `src/content.js`. Supported `type` values are `dir`,
-`text` (light markdown), `image` and `link`. To support a new type, add a
+`text` (light markdown), `image`, `pdf` and `link`. To support a new type, add a
 renderer in `src/ui/desktop/apps/` and register it in the `APPS` map in
-`src/ui/desktop/index.js`.
+`src/ui/desktop/index.js`. Standalone apps that aren't tied to a file (the
+Browser and Media Player) are pinned to the dock via the `LAUNCHERS` list in the
+same file.
 
 ## Design notes
 
@@ -51,14 +54,14 @@ update loop and every interact handler check it, so the character cannot walk
 around while you are reading. A short cooldown after closing stops the dismiss
 keypress from immediately reopening the same object.
 
-**The camera is fixed.** The room is one 20×15 tile space rendered at a 320×240
-virtual resolution and letterboxed up to the window, so the whole room is always
-framed. If a second floor is ever added, swap in `k.setCamPos(player.pos)`.
+**The camera is fixed.** The room is one small tile space and `src/camera.js`
+zooms it to fit the window. The canvas renders at the window's native resolution
+rather than upscaling a low-res framebuffer — that is what keeps the desktop's
+text sharp. If a second floor is ever added, swap in `k.setCamPos(player.pos)`.
 
 ## Status
 
-Playable end to end with placeholder art. Still to do:
-
-- [ ] Real art (see `CREDITS.md` for the chosen CC0 packs) and a Tiled-drawn room
-- [ ] Replace all `TODO(nathan)` copy in `src/content.js`
-- [ ] Mobile touch controls, deploy workflow, audio — deliberately deferred
+Playable end to end: a cyberpunk room drawn in Tiled with eight examinable
+objects, and a desktop OS — file explorer, text / image / PDF viewers, a
+bookmark browser and a media player. Touch controls, a GitHub Pages deploy
+workflow and audio are all in.

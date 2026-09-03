@@ -7,13 +7,12 @@ dist/
 Thumbs.db
 *.local
 
-# Source asset packs — large and mostly unused. The project keeps only the
-# files it actually references (public/assets/furniture, the cyberpunk sheet,
-# public/assets/player/Walk.png). The full packs stay on disk locally; see
-# CREDITS.md for where to download them. Never commit these.
+# Source asset packs — kept locally for reference, never shipped. They live in
+# art-source/ (OUTSIDE public/) so Vite's build never copies them; the project
+# ships only the files it actually references (public/assets/furniture, the
+# cyberpunk sheet, public/assets/player/Walk.png). See CREDITS.md for sources.
 PortfolioMap/*.zip
-public/assets/Ninja Adventure - Asset Pack/
-public/assets/kenney_rpg-urban-pack/
+art-source/
 
 # Tiled editor session (machine-specific window state); keep the .tiled-project
 *.tiled-session

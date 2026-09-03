@@ -11,16 +11,18 @@ No code or assets from that project are used here.
 
 ## Art
 
-Placeholder art is generated in code (`src/placeholderArt.js`). When real art
-lands, the intended sources are:
-
 | Asset | Source | License |
 | --- | --- | --- |
-| Tiles, character sprites | [Ninja Adventure Asset Pack](https://pixel-boy.itch.io/ninja-adventure-asset-pack) by Pixel-Boy & AAA | CC0 |
-| Interior furniture | [RPG Urban Pack](https://kenney.nl/assets/rpg-urban-pack) by Kenney | CC0 |
-| Pixel font | [monogram](https://datagoblin.itch.io/monogram) by datagoblin | CC0 |
+| Room tileset & furniture | [Pixel Cyberpunk Interior](https://itch.io/) (free version) | see pack license |
+| Player character sprite | [Ninja Adventure Asset Pack](https://pixel-boy.itch.io/ninja-adventure-asset-pack) by Pixel-Boy & AAA | CC0 |
 
-All three are CC0, so attribution is not legally required — it is here because
-crediting people who give work away for free is the right thing to do.
+Crediting people who share their work is the right thing to do even where a
+license does not require it. A placeholder fill (`src/placeholderArt.js`) still
+backs any object whose sprite is missing, so the room degrades gracefully.
 
-**Note:** sprites ripped from commercial Pokémon games are deliberately not used.
+**Note:** sprites ripped from commercial games are deliberately not used.
+
+<!-- TODO(nathan): confirm the exact name, author and license URL of the
+     "Pixel Cyberpunk Interior" pack and link it above — the local folder is
+     public/assets/pixel_cyberpunk_interior_free_1.0.1. A pixel font (e.g.
+     monogram, CC0) is planned but not yet wired in; credit it once it lands. -->

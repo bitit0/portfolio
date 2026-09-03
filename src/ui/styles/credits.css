@@ -1,0 +1,67 @@
+/* Always-visible byline + social links, bottom-right, outside the game world. */
+
+#credits {
+  position: fixed;
+  right: clamp(0.5rem, 1.5vw, 1.25rem);
+  bottom: clamp(0.4rem, 1.2vh, 1rem);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  /* The bar itself is click-through; only the links below opt back in, so
+     clicking empty space still reaches the canvas. */
+  pointer-events: none;
+  font-family: var(--font-pixel);
+  color: var(--ink-dim);
+  user-select: none;
+}
+
+.credits-by {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+}
+
+.credits-links {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.credits-links a {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 6px;
+  color: var(--ink-dim);
+  background: rgb(22 20 32 / 55%);
+  border: 1px solid transparent;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease,
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+.credits-links a:hover,
+.credits-links a:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--panel-raised);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.credits-links svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  display: block;
+}
+
+/* On a phone-sized screen, drop the byline to keep the corner uncluttered. */
+@media (max-width: 30rem) {
+  .credits-by {
+    display: none;
+  }
+}

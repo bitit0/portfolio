@@ -1,0 +1,56 @@
+/* Shared shell: the canvas fills the window, overlays sit on top of it. */
+
+:root {
+  /* TODO(nathan): swap in monogram.ttf as an @font-face in step 5. */
+  --font-pixel: ui-monospace, "DejaVu Sans Mono", "Courier New", monospace;
+
+  --ink: #ece8f6;
+  --ink-dim: #a29cba;
+  --panel: #16141f;
+  --panel-raised: #262234;
+  --edge: #4a4462;
+  --accent: #7cbedc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0c0b12;
+  font-family: var(--font-pixel);
+  color: var(--ink);
+  /* The game reads WASD; stop the browser from selecting the page while walking. */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100dvh;
+  image-rendering: pixelated;
+  outline: none;
+}
+
+/* Overlays are hidden via the `hidden` attribute and must not capture clicks
+   when closed — otherwise the canvas stops receiving input. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+/* Anything inside an overlay is real UI: let it be selected and clicked. */
+.overlay :is(p, h1, h2, h3, li, code, pre, a) {
+  -webkit-user-select: text;
+  user-select: text;
+}

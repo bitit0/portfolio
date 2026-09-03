@@ -1,0 +1,368 @@
+/* The in-game computer. Retro chrome, but real DOM underneath. */
+
+/* Scoped with :not([hidden]) on purpose. These are ID selectors (specificity
+   1-0-0) and would otherwise beat `.overlay[hidden] { display: none }` in
+   base.css (0-2-0), leaving the overlay permanently displayed — a dark scrim
+   over the game that also swallowed every click aimed at the canvas. */
+#desktop:not([hidden]) {
+  display: grid;
+  place-items: center;
+  padding: clamp(0.5rem, 2vmin, 2rem);
+  background: rgb(6 5 11 / 72%);
+}
+
+.os {
+  display: flex;
+  flex-direction: column;
+  width: min(60rem, 100%);
+  height: min(40rem, 100%);
+  background: var(--panel);
+  border: 3px solid var(--edge);
+  border-radius: 10px;
+  box-shadow: 0 18px 60px rgb(0 0 0 / 60%);
+  overflow: hidden;
+}
+
+.os-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--panel-raised);
+  border-bottom: 2px solid var(--edge);
+}
+
+.os-title {
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+
+.os-exit,
+.explorer-up,
+.explorer-crumb {
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.os-exit:hover,
+.explorer-up:not(:disabled):hover,
+.explorer-crumb:not(:disabled):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.explorer-up:disabled,
+.explorer-crumb:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Windows are absolutely positioned inside this, so it is the drag bounds. */
+.os-screen {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 2%) 0 2px, transparent 2px 8px),
+    #1d2530;
+}
+
+.os-icons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.35rem;
+  height: 100%;
+  padding: 0.75rem;
+}
+
+.os-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  width: 5.5rem;
+  padding: 0.45rem 0.25rem;
+  font: inherit;
+  font-size: 0.7rem;
+  color: var(--ink);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.os-icon:hover,
+.os-icon:focus-visible {
+  background: rgb(124 190 220 / 14%);
+  border-color: var(--accent);
+}
+
+.os-icon-glyph {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.os-icon-label {
+  overflow-wrap: anywhere;
+}
+
+.os-windows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* icons underneath stay clickable */
+}
+
+.os-hint {
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+  background: var(--panel-raised);
+  border-top: 2px solid var(--edge);
+}
+
+/* --- Windows --- */
+
+.win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  max-height: 100%;
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 50%);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.win.is-active {
+  border-color: var(--accent);
+}
+
+.win-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--panel-raised);
+  border-bottom: 2px solid var(--edge);
+  cursor: grab;
+  touch-action: none; /* required for pointer-based dragging */
+}
+
+.win-bar:active {
+  cursor: grabbing;
+}
+
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.win.is-active .win-title {
+  color: var(--accent);
+}
+
+.win-close {
+  flex: none;
+  width: 1.4rem;
+  height: 1.4rem;
+  font: inherit;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.win-close:hover {
+  color: #ffb4b4;
+  border-color: #ffb4b4;
+}
+
+.win-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* --- File explorer --- */
+
+.app-explorer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.explorer-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 2px solid var(--edge);
+  font-size: 0.72rem;
+  flex-wrap: wrap;
+}
+
+.explorer-sep {
+  color: var(--ink-dim);
+}
+
+.explorer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+  gap: 0.4rem;
+  padding: 0.6rem;
+  overflow: auto;
+}
+
+.explorer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.3rem;
+  font: inherit;
+  font-size: 0.7rem;
+  color: var(--ink);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.explorer-item:hover,
+.explorer-item:focus-visible {
+  background: rgb(124 190 220 / 12%);
+  border-color: var(--accent);
+}
+
+.explorer-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.explorer-name {
+  overflow-wrap: anywhere;
+}
+
+/* --- Text viewer --- */
+
+.app-text {
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.app-text h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: var(--accent);
+}
+
+.app-text h2 {
+  margin: 1.25rem 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  border-bottom: 1px solid var(--edge);
+  padding-bottom: 0.2rem;
+}
+
+.app-text h3 {
+  margin: 1rem 0 0.3rem;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+
+.app-text p {
+  margin: 0 0 0.75rem;
+}
+
+.app-text ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.1rem;
+}
+
+.app-text li {
+  margin-bottom: 0.25rem;
+}
+
+.app-text code {
+  padding: 0.05em 0.3em;
+  background: var(--panel-raised);
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.app-text pre {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--panel-raised);
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.app-text pre code {
+  padding: 0;
+  background: none;
+}
+
+.app-text a {
+  color: var(--accent);
+}
+
+/* --- Image viewer --- */
+
+.app-image {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: 0.75rem;
+}
+
+.app-image img {
+  max-width: 100%;
+  max-height: 100%;
+  image-rendering: pixelated;
+}
+
+.app-empty {
+  margin: auto;
+  padding: 1.5rem;
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 40rem) {
+  .os {
+    height: 100%;
+  }
+  .win {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 0;
+  }
+}

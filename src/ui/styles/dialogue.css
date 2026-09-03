@@ -1,0 +1,92 @@
+/* Bottom-anchored dialogue box, in the spirit of the games this room is from. */
+
+/* Scoped with :not([hidden]) on purpose. These are ID selectors (specificity
+   1-0-0) and would otherwise beat `.overlay[hidden] { display: none }` in
+   base.css (0-2-0), leaving the overlay permanently displayed — a dark scrim
+   over the game that also swallowed every click aimed at the canvas. */
+#dialogue:not([hidden]) {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vh, 2.5rem);
+  /* The backdrop is deliberately not opaque: you should still see the room. */
+  background: linear-gradient(to top, rgb(8 7 14 / 55%), transparent 45%);
+}
+
+.dialogue-box {
+  width: min(46rem, 100%);
+  padding: 1rem 1.25rem;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px var(--panel), 0 12px 32px rgb(0 0 0 / 55%);
+  cursor: pointer;
+}
+
+.dialogue-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.dialogue-text {
+  margin: 0;
+  min-height: 3.2em;
+  font-size: clamp(0.95rem, 2.4vh, 1.15rem);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.dialogue-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.dialogue-links a {
+  padding: 0.3rem 0.7rem;
+  border: 2px solid var(--edge);
+  border-radius: 4px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.dialogue-links a:hover,
+.dialogue-links a:focus-visible {
+  border-color: var(--accent);
+  background: var(--panel-raised);
+}
+
+.dialogue-hint {
+  margin-top: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  text-align: right;
+}
+
+/* The blinking "there is more" caret. */
+.dialogue-hint::after {
+  content: " \25BC";
+  animation: dialogue-blink 1s steps(2, start) infinite;
+}
+
+.dialogue-hint[data-last="true"]::after {
+  content: "";
+  animation: none;
+}
+
+@keyframes dialogue-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialogue-hint::after {
+    animation: none;
+  }
+}

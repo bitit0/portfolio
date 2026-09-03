@@ -1,0 +1,19 @@
+# dependencies & build output
+node_modules/
+dist/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.local
+
+# Source asset packs — large and mostly unused. The project keeps only the
+# files it actually references (public/assets/furniture, the cyberpunk sheet,
+# public/assets/player/Walk.png). The full packs stay on disk locally; see
+# CREDITS.md for where to download them. Never commit these.
+PortfolioMap/*.zip
+public/assets/Ninja Adventure - Asset Pack/
+public/assets/kenney_rpg-urban-pack/
+
+# Tiled editor session (machine-specific window state); keep the .tiled-project
+*.tiled-session

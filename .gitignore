@@ -17,3 +17,6 @@ public/assets/kenney_rpg-urban-pack/
 
 # Tiled editor session (machine-specific window state); keep the .tiled-project
 *.tiled-session
+
+# Local Diablo IV automation scripts — contain a live Discord webhook, not part of the site
+scripts view/

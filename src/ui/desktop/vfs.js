@@ -9,6 +9,7 @@ const ICONS = {
   dir: "🗂",
   text: "📄",
   image: "🖼",
+  pdf: "📕",
   link: "🔗",
 };
 

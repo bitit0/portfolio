@@ -67,8 +67,6 @@ export function createWindowManager(layer) {
 
     const offset = (cascade % MAX_CASCADE) * CASCADE_STEP;
     cascade += 1;
-    el.style.left = `${offset}px`;
-    el.style.top = `${offset}px`;
 
     el.innerHTML = `
       <header class="win-bar">
@@ -76,6 +74,7 @@ export function createWindowManager(layer) {
         <button class="win-close" type="button" aria-label="Close window">×</button>
       </header>
       <div class="win-body"></div>
+      <div class="win-resize" aria-hidden="true"></div>
     `;
 
     /** @type {HTMLElement} */ (el.querySelector(".win-icon")).textContent = icon;
@@ -89,8 +88,22 @@ export function createWindowManager(layer) {
     el.addEventListener("pointerdown", () => focus(id));
 
     makeDraggable(el, /** @type {HTMLElement} */ (el.querySelector(".win-bar")), layer);
+    makeResizable(el, /** @type {HTMLElement} */ (el.querySelector(".win-resize")), layer);
 
     layer.append(el);
+
+    // Clamp size and position now that the window has a measurable box, so it
+    // can never be born larger than — or hanging off the edge of — the screen.
+    // The drag handler clamps too, but that only fires once you grab the window;
+    // without this, a tall window (the PDF viewer) spawns below the bottom edge
+    // and only snaps inside on the first drag.
+    const maxW = layer.clientWidth;
+    const maxH = layer.clientHeight;
+    if (el.offsetWidth > maxW) el.style.width = `${maxW}px`;
+    if (el.offsetHeight > maxH) el.style.height = `${maxH}px`;
+    el.style.left = `${clamp(offset, 0, Math.max(0, maxW - el.offsetWidth))}px`;
+    el.style.top = `${clamp(offset, 0, Math.max(0, maxH - el.offsetHeight))}px`;
+
     windows.set(id, el);
     focus(id);
     return el;
@@ -101,6 +114,8 @@ export function createWindowManager(layer) {
     focus,
     close,
     hasWindows: () => windows.size > 0,
+    /** Whether a window with this id is currently open (for dock indicators). */
+    isOpen: (id) => windows.has(id),
     /** Closes the most recently focused window. Returns whether one was closed. */
     closeTopWindow() {
       const id = order[order.length - 1];
@@ -148,6 +163,43 @@ function makeDraggable(el, handle, bounds) {
   function onUp(e) {
     handle.releasePointerCapture?.(e.pointerId);
     handle.removeEventListener("pointermove", onMove);
+  }
+}
+
+/**
+ * Corner-grip resizing, clamped so a window stays usable and inside the desktop.
+ */
+function makeResizable(el, grip, bounds) {
+  const MIN_W = 220;
+  const MIN_H = 160;
+  let startX = 0;
+  let startY = 0;
+  let originW = 0;
+  let originH = 0;
+
+  grip.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    grip.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startY = e.clientY;
+    originW = el.offsetWidth;
+    originH = el.offsetHeight;
+    grip.addEventListener("pointermove", onMove);
+    grip.addEventListener("pointerup", onUp, { once: true });
+    grip.addEventListener("pointercancel", onUp, { once: true });
+  });
+
+  function onMove(e) {
+    const maxW = bounds.clientWidth - el.offsetLeft;
+    const maxH = bounds.clientHeight - el.offsetTop;
+    el.style.width = `${clamp(originW + e.clientX - startX, MIN_W, maxW)}px`;
+    el.style.height = `${clamp(originH + e.clientY - startY, MIN_H, maxH)}px`;
+  }
+
+  function onUp(e) {
+    grip.releasePointerCapture?.(e.pointerId);
+    grip.removeEventListener("pointermove", onMove);
   }
 }
 

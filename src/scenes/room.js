@@ -70,10 +70,9 @@ export function registerRoomScene() {
     // fixed() so it ignores the camera zoom: its size is in screen pixels and
     // it stays sharp no matter how far the room is scaled up.
     const hint = k.add([
-      k.text(
-        `WASD / arrows to move   ·   Shift to run   ·   ${INTERACT_KEY_LABEL} to examine`,
-        { size: UI_HINT_SIZE },
-      ),
+      k.text(`WASD / arrows to move   ·   Shift to run   ·   ${INTERACT_KEY_LABEL} to examine`, {
+        size: UI_HINT_SIZE,
+      }),
       k.color(196, 192, 214),
       k.pos(0, 0),
       k.anchor("center"),

@@ -71,14 +71,20 @@ const CURATED = {
 
 function decode(file) {
   const b = fs.readFileSync(file);
-  let pos = 8, w = 0, h = 0, ctype = 0;
+  let pos = 8,
+    w = 0,
+    h = 0,
+    ctype = 0;
   const idat = [];
   while (pos < b.length) {
     const len = b.readUInt32BE(pos);
     const type = b.toString("ascii", pos + 4, pos + 8);
     const data = b.subarray(pos + 8, pos + 8 + len);
-    if (type === "IHDR") { w = data.readUInt32BE(0); h = data.readUInt32BE(4); ctype = data[9]; }
-    else if (type === "IDAT") idat.push(Buffer.from(data));
+    if (type === "IHDR") {
+      w = data.readUInt32BE(0);
+      h = data.readUInt32BE(4);
+      ctype = data[9];
+    } else if (type === "IDAT") idat.push(Buffer.from(data));
     else if (type === "IEND") break;
     pos += 12 + len;
   }
@@ -89,17 +95,23 @@ function decode(file) {
   let p = 0;
   for (let y = 0; y < h; y++) {
     const f = raw[p++];
-    const line = raw.subarray(p, p + stride); p += stride;
+    const line = raw.subarray(p, p + stride);
+    p += stride;
     const prev = y > 0 ? out.subarray((y - 1) * stride, y * stride) : Buffer.alloc(stride);
     const cur = out.subarray(y * stride, (y + 1) * stride);
     for (let x = 0; x < stride; x++) {
-      const a = x >= ch ? cur[x - ch] : 0, bb = prev[x], c = x >= ch ? prev[x - ch] : 0;
+      const a = x >= ch ? cur[x - ch] : 0,
+        bb = prev[x],
+        c = x >= ch ? prev[x - ch] : 0;
       let v = line[x];
       if (f === 1) v += a;
       else if (f === 2) v += bb;
       else if (f === 3) v += (a + bb) >> 1;
       else if (f === 4) {
-        const pp = a + bb - c, pa = Math.abs(pp - a), pb = Math.abs(pp - bb), pc = Math.abs(pp - c);
+        const pp = a + bb - c,
+          pa = Math.abs(pp - a),
+          pb = Math.abs(pp - bb),
+          pc = Math.abs(pp - c);
         v += pa <= pb && pa <= pc ? a : pb <= pc ? bb : c;
       }
       cur[x] = v & 0xff;
@@ -107,11 +119,26 @@ function decode(file) {
   }
   const rgba = Buffer.alloc(w * h * 4);
   for (let i = 0; i < w * h; i++) {
-    let r, g, bl, al = 255;
-    if (ch === 4) { r = out[i * 4]; g = out[i * 4 + 1]; bl = out[i * 4 + 2]; al = out[i * 4 + 3]; }
-    else if (ch === 3) { r = out[i * 3]; g = out[i * 3 + 1]; bl = out[i * 3 + 2]; }
-    else { r = g = bl = out[i]; }
-    rgba[i * 4] = r; rgba[i * 4 + 1] = g; rgba[i * 4 + 2] = bl; rgba[i * 4 + 3] = al;
+    let r,
+      g,
+      bl,
+      al = 255;
+    if (ch === 4) {
+      r = out[i * 4];
+      g = out[i * 4 + 1];
+      bl = out[i * 4 + 2];
+      al = out[i * 4 + 3];
+    } else if (ch === 3) {
+      r = out[i * 3];
+      g = out[i * 3 + 1];
+      bl = out[i * 3 + 2];
+    } else {
+      r = g = bl = out[i];
+    }
+    rgba[i * 4] = r;
+    rgba[i * 4 + 1] = g;
+    rgba[i * 4 + 2] = bl;
+    rgba[i * 4 + 3] = al;
   }
   return { w, h, rgba };
 }
@@ -132,9 +159,11 @@ function crc32(buf) {
 }
 
 function chunk(type, data) {
-  const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+  const len = Buffer.alloc(4);
+  len.writeUInt32BE(data.length);
   const td = Buffer.concat([Buffer.from(type, "ascii"), data]);
-  const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(td));
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(td));
   return Buffer.concat([len, td, crc]);
 }
 
@@ -147,8 +176,10 @@ function encodeRGBA(w, h, rgba) {
     rgba.copy(raw, row + 1, y * w * 4, (y + 1) * w * 4);
   }
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4);
-  ihdr[8] = 8; ihdr[9] = 6;
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 6;
   return Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk("IHDR", ihdr),
@@ -166,12 +197,17 @@ function findIslands(im, minPixels = 24) {
     for (let x = 0; x < im.w; x++) {
       const i = y * im.w + x;
       if (seen[i] || alpha(x, y) < 16) continue;
-      let minx = x, maxx = x, miny = y, maxy = y, n = 0;
+      let minx = x,
+        maxx = x,
+        miny = y,
+        maxy = y,
+        n = 0;
       const st = [i];
       seen[i] = 1;
       while (st.length) {
         const cur = st.pop();
-        const cx = cur % im.w, cy = (cur / im.w) | 0;
+        const cx = cur % im.w,
+          cy = (cur / im.w) | 0;
         n++;
         if (cx < minx) minx = cx;
         if (cx > maxx) maxx = cx;
@@ -179,7 +215,8 @@ function findIslands(im, minPixels = 24) {
         if (cy > maxy) maxy = cy;
         for (let dy = -1; dy <= 1; dy++) {
           for (let dx = -1; dx <= 1; dx++) {
-            const nx = cx + dx, ny = cy + dy;
+            const nx = cx + dx,
+              ny = cy + dy;
             if (nx < 0 || ny < 0 || nx >= im.w || ny >= im.h) continue;
             const ni = ny * im.w + nx;
             if (seen[ni] || alpha(nx, ny) < 16) continue;
@@ -195,7 +232,8 @@ function findIslands(im, minPixels = 24) {
 }
 
 const sheet = decode(SHEET);
-const inside = (a, b) => a.x >= b.x && a.y >= b.y && a.x + a.w <= b.x + b.w && a.y + a.h <= b.y + b.h;
+const inside = (a, b) =>
+  a.x >= b.x && a.y >= b.y && a.x + a.w <= b.x + b.w && a.y + a.h <= b.y + b.h;
 
 const regions = new Map(Object.entries(CURATED));
 const curatedRects = Object.values(CURATED);

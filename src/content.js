@@ -33,9 +33,7 @@ export const DIALOGUE = {
   },
   window: {
     label: "Window",
-    lines: [
-      "The city of Boston, buzzing along.",
-    ],
+    lines: ["The city of Boston, buzzing along."],
   },
   shelf: {
     label: "Shelf",
@@ -44,14 +42,12 @@ export const DIALOGUE = {
       "Python · C# · C++ · Java",
       "JavaScript · React · TypeScript",
       "Docker · Git · Windows · Linux",
-      "Claude · Codex"
+      "Claude · Codex",
     ],
   },
   fridge: {
     label: "Fridge",
-    lines: [
-      "Sushi, tacos, pho, with cans of cold, crisp, Coca-Cola.",
-    ],
+    lines: ["Sushi, tacos, pho, with cans of cold, crisp, Coca-Cola."],
   },
   bed: {
     label: "Bed",
@@ -65,7 +61,7 @@ export const DIALOGUE = {
     lines: [
       "Four identical jackets. Decision fatigue is a real thing.",
       "Lots of neutral color sweatshirts.",
-    ]
+    ],
   },
   mailbox: {
     label: "Terminal",
@@ -302,8 +298,16 @@ export const BOOKMARKS = [
  */
 export const PLAYLIST = [
   // { title: "Track Name", artist: "Artist", src: asset("assets/music/track.mp3") },
-  { title: "Don't Dream It's Over", artist: "Crowded House", src: asset("assets/music/crowded-house-dont-dream-its-over.mp3") },
+  {
+    title: "Don't Dream It's Over",
+    artist: "Crowded House",
+    src: asset("assets/music/crowded-house-dont-dream-its-over.mp3"),
+  },
   { title: "Always", artist: "Daniel Caesar", src: asset("assets/music/daniel-caesar-always.mp3") },
-  { title: "Roses", artist: "The Chainsmokers", src: asset("assets/music/the-chainsmokers-roses.mp3") },
+  {
+    title: "Roses",
+    artist: "The Chainsmokers",
+    src: asset("assets/music/the-chainsmokers-roses.mp3"),
+  },
   { title: "love.", artist: "wave to earth", src: asset("assets/music/wave-to-earth-love.mp3") },
 ];

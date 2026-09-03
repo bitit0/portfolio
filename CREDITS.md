@@ -11,10 +11,10 @@ No code or assets from that project are used here.
 
 ## Art
 
-| Asset | Source | License |
-| --- | --- | --- |
-| Room tileset & furniture | [Pixel Cyberpunk Interior](https://itch.io/) (free version) | see pack license |
-| Player character sprite | [Ninja Adventure Asset Pack](https://pixel-boy.itch.io/ninja-adventure-asset-pack) by Pixel-Boy & AAA | CC0 |
+| Asset                    | Source                                                                                                | License          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- | ---------------- |
+| Room tileset & furniture | [Pixel Cyberpunk Interior](https://itch.io/) (free version)                                           | see pack license |
+| Player character sprite  | [Ninja Adventure Asset Pack](https://pixel-boy.itch.io/ninja-adventure-asset-pack) by Pixel-Boy & AAA | CC0              |
 
 Crediting people who share their work is the right thing to do even where a
 license does not require it. A placeholder fill (`src/placeholderArt.js`) still

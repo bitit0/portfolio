@@ -44,12 +44,26 @@ const LAUNCHERS = [
 
 function openBrowser() {
   if (!wm) return;
-  wm.openWindow({ id: "app:browser", title: "Browser", icon: "🌐", content: browser(), width: 640, height: 460 });
+  wm.openWindow({
+    id: "app:browser",
+    title: "Browser",
+    icon: "🌐",
+    content: browser(),
+    width: 640,
+    height: 460,
+  });
 }
 
 function openMedia() {
   if (!wm) return;
-  wm.openWindow({ id: "app:media", title: "Media Player", icon: "🎵", content: mediaPlayer(), width: 420, height: 520 });
+  wm.openWindow({
+    id: "app:media",
+    title: "Media Player",
+    icon: "🎵",
+    content: mediaPlayer(),
+    width: 420,
+    height: 520,
+  });
 }
 
 /** Handle of the clock/dock refresh interval, cleared when the OS closes. */

@@ -1,0 +1,26 @@
+# Quality gate: lint, formatting and a build check on every push and PR.
+#
+# Kept separate from deploy.yml on purpose — this reports a red/green check
+# without blocking a publish. To make a clean CI a hard requirement for
+# deploying, fold these steps into deploy.yml's build job instead.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run build

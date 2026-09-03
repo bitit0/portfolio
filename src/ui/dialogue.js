@@ -9,7 +9,6 @@ import { DIALOGUE_CHARS_PER_SECOND, INTERACT_KEYS_DOM } from "../constants.js";
  * re-solved at 320x240 game resolution.
  */
 
-
 const root = /** @type {HTMLElement} */ (document.getElementById("dialogue"));
 
 let state = null;

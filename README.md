@@ -17,12 +17,12 @@ joystick and interact button appear automatically.
 
 ## Where things live
 
-| I want to… | Edit |
-| --- | --- |
-| Change what an object says | `src/content.js` → `DIALOGUE` |
-| Change what is on the computer | `src/content.js` → `VFS` |
-| Move furniture, add an object | `public/assets/map.json` |
-| Change placeholder colours | `src/placeholderArt.js` |
+| I want to…                     | Edit                          |
+| ------------------------------ | ----------------------------- |
+| Change what an object says     | `src/content.js` → `DIALOGUE` |
+| Change what is on the computer | `src/content.js` → `VFS`      |
+| Move furniture, add an object  | `public/assets/map.json`      |
+| Change placeholder colours     | `src/placeholderArt.js`       |
 
 ### Adding a new examinable object
 

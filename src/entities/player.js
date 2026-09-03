@@ -9,7 +9,6 @@ import {
 import { isUIOpen } from "../uiState.js";
 import { getMove } from "../touchInput.js";
 
-
 /** Half the sprite's height, used for depth sorting against furniture. */
 const HALF_HEIGHT = 8;
 
@@ -84,8 +83,7 @@ export function makePlayer(spawn) {
 
     // Holding a run key — or pushing the joystick to its edge — speeds movement
     // up without changing the animation rate, so the walk cycle still reads.
-    const running =
-      RUN_KEYS.some((key) => k.isKeyDown(key)) || Math.hypot(stick.x, stick.y) > 0.85;
+    const running = RUN_KEYS.some((key) => k.isKeyDown(key)) || Math.hypot(stick.x, stick.y) > 0.85;
     const speed = running ? PLAYER_SPEED * RUN_MULTIPLIER : PLAYER_SPEED;
 
     // Normalise so diagonals are not faster than the cardinals.

@@ -206,9 +206,7 @@ export function setupInteractionSystem(player) {
       // Hidden while an overlay is open, once its object is examined, and while
       // the player is right next to it (the prompt says the same thing louder).
       arrow.hidden =
-        hideAll ||
-        examined.has(arrow.key) ||
-        (currentTarget && currentTarget.key === arrow.key);
+        hideAll || examined.has(arrow.key) || (currentTarget && currentTarget.key === arrow.key);
       // Re-project from the world anchor so the fixed-size arrow tracks the
       // object through camera resizes.
       const s = k.toScreen(arrow.anchor);

@@ -49,9 +49,7 @@ const SURFACES = {
  */
 function loadSpriteRegion(name, url, [sheetW, sheetH], region) {
   k.loadSprite(name, url, {
-    frames: [
-      k.quad(region.x / sheetW, region.y / sheetH, region.w / sheetW, region.h / sheetH),
-    ],
+    frames: [k.quad(region.x / sheetW, region.y / sheetH, region.w / sheetW, region.h / sheetH)],
   });
 }
 
@@ -82,7 +80,10 @@ function loadMapTilesets(map) {
     if (Array.isArray(ts.tiles) && ts.tiles.length && !ts.image) {
       for (const tile of ts.tiles) {
         if (!tile.image) continue;
-        const name = tile.image.split("/").pop().replace(/\.[^.]+$/, "");
+        const name = tile.image
+          .split("/")
+          .pop()
+          .replace(/\.[^.]+$/, "");
         k.loadSprite(collectionSpriteName(name), asset(`assets/${tile.image}`));
       }
       continue;
@@ -153,5 +154,10 @@ export function spriteForGid(map, gid) {
   if (!best || !Array.isArray(best.tiles)) return null;
   const tile = best.tiles.find((t) => t.id === id - best.firstgid);
   if (!tile?.image) return null;
-  return collectionSpriteName(tile.image.split("/").pop().replace(/\.[^.]+$/, ""));
+  return collectionSpriteName(
+    tile.image
+      .split("/")
+      .pop()
+      .replace(/\.[^.]+$/, ""),
+  );
 }

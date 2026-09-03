@@ -19,7 +19,9 @@
   background: var(--panel);
   border: 3px solid var(--ink);
   border-radius: 8px;
-  box-shadow: 0 0 0 3px var(--panel), 0 12px 32px rgb(0 0 0 / 55%);
+  box-shadow:
+    0 0 0 3px var(--panel),
+    0 12px 32px rgb(0 0 0 / 55%);
   cursor: pointer;
 }
 

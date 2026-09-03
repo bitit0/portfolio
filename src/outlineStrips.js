@@ -84,7 +84,10 @@ function naturalSize(map, stem) {
     if (!Array.isArray(ts.tiles)) continue;
     for (const tile of ts.tiles) {
       if (!tile.image) continue;
-      const name = tile.image.split("/").pop().replace(/\.[^.]+$/, "");
+      const name = tile.image
+        .split("/")
+        .pop()
+        .replace(/\.[^.]+$/, "");
       if (name === stem) return { w: tile.imagewidth, h: tile.imageheight };
     }
   }

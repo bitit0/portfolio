@@ -40,7 +40,8 @@ export function browser() {
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     a.innerHTML = `<span class="browser-tile-glyph"></span><span class="browser-tile-label"></span>`;
-    /** @type {HTMLElement} */ (a.querySelector(".browser-tile-glyph")).textContent = mark.glyph ?? "🔗";
+    /** @type {HTMLElement} */ (a.querySelector(".browser-tile-glyph")).textContent =
+      mark.glyph ?? "🔗";
     /** @type {HTMLElement} */ (a.querySelector(".browser-tile-label")).textContent = mark.label;
     grid.append(a);
   }

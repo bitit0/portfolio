@@ -20,4 +20,3 @@ export const OBJECT_COLORS = {
 };
 
 export const FALLBACK_COLOR = /** @type {[number, number, number]} */ ([140, 140, 150]);
-

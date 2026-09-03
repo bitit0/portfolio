@@ -9,8 +9,8 @@ import { Z } from "./constants.js";
  * frame index within that tileset is `gid - firstgid`. GID 0 means empty.
  */
 
-/** Tiled packs flip flags into the top 3 bits of the GID. */
-const FLIP_FLAGS = 0xe0000000;
+/** Tiled packs flip flags into the top 3 bits of the GID; masking them off with
+ *  the low 29 bits leaves the plain tile id. (Flips themselves aren't used.) */
 const GID_MASK = 0x1fffffff;
 
 /** Sprite name registered for a tileset, so assets.js and this agree. */

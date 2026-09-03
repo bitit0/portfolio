@@ -98,7 +98,8 @@ export function mediaPlayer() {
   // Volume: the slider sets it directly; the speaker button toggles mute while
   // remembering the level to restore. The glyph reflects the current level.
   function applyVolume() {
-    muteBtn.textContent = audio.muted || audio.volume === 0 ? "🔇" : audio.volume < 0.5 ? "🔉" : "🔊";
+    muteBtn.textContent =
+      audio.muted || audio.volume === 0 ? "🔇" : audio.volume < 0.5 ? "🔉" : "🔊";
   }
   vol.addEventListener("input", () => {
     audio.muted = false;

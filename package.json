@@ -9,7 +9,17 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,html,json,md,svg}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "kaplay": "^3001.0.19"
@@ -19,6 +29,8 @@
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.9.6",
     "vite": "^8.2.1"
   }

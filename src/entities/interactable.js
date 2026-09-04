@@ -12,6 +12,7 @@ import { DIALOGUE } from "../content.js";
 import { spriteForGid } from "../assets.js";
 import { isUIOpen, isInteractCoolingDown } from "../uiState.js";
 import { onVirtualInteract } from "../touchInput.js";
+import { playClick } from "../sfx.js";
 import { openDialogue } from "../ui/dialogue.js";
 import { openDesktop } from "../ui/desktop/index.js";
 
@@ -213,6 +214,7 @@ export function setupInteractionSystem(player) {
 
   const interact = () => {
     if (!currentTarget || isUIOpen() || isInteractCoolingDown()) return;
+    playClick();
     examined.add(currentTarget.key); // retire its hint arrow
 
     if (currentTarget.key === "computer") {

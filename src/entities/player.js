@@ -8,6 +8,7 @@ import {
 } from "../constants.js";
 import { isUIOpen } from "../uiState.js";
 import { getMove } from "../touchInput.js";
+import { updateFootsteps } from "../sfx.js";
 
 /** Half the sprite's height, used for depth sorting against furniture. */
 const HALF_HEIGHT = 8;
@@ -45,6 +46,7 @@ export function makePlayer(spawn) {
     // The single guard that freezes the player while an overlay is open.
     if (isUIOpen()) {
       setAnim(`idle-${player.facing}`);
+      updateFootsteps(false, false);
       return;
     }
 
@@ -66,6 +68,7 @@ export function makePlayer(spawn) {
 
     if (dx === 0 && dy === 0) {
       setAnim(`idle-${player.facing}`);
+      updateFootsteps(false, false);
       return;
     }
 
@@ -81,6 +84,7 @@ export function makePlayer(spawn) {
     // up without changing the animation rate, so the walk cycle still reads.
     const running = RUN_KEYS.some((key) => k.isKeyDown(key)) || Math.hypot(stick.x, stick.y) > 0.85;
     const speed = running ? PLAYER_SPEED * RUN_MULTIPLIER : PLAYER_SPEED;
+    updateFootsteps(true, running);
 
     // Normalise so diagonals are not faster than the cardinals.
     player.move(k.vec2(dx, dy).unit().scale(speed));

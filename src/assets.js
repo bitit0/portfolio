@@ -92,6 +92,10 @@ export function loadGameAssets(map) {
   for (const [name, region] of Object.entries(SURFACES)) {
     loadSpriteRegion(name, sheet, CYBER_SHEET, region);
   }
+
+  k.loadSound("footstep_slow", asset("assets/sfx/footstep_slow.mp3"));
+  k.loadSound("footstep_fast", asset("assets/sfx/footstep_fast.mp3"));
+  k.loadSound("click", asset("assets/sfx/click.mp3"));
 }
 
 /** Sprite name for one image of a collection tileset. */

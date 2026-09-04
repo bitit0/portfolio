@@ -3,17 +3,25 @@ import { asset } from "./paths.js";
 import { loadGameAssets } from "./assets.js";
 import { registerRoomScene } from "./scenes/room.js";
 import { mountTouchControls } from "./ui/touchControls.js";
+import { mountBootScreen } from "./ui/bootScreen.js";
+import { mountTextFallback } from "./ui/textFallback.js";
 import "./ui/styles/base.css";
 import "./ui/styles/dialogue.css";
 import "./ui/styles/desktop.css";
 import "./ui/styles/credits.css";
 import "./ui/styles/touch.css";
+import "./ui/styles/boot.css";
 
 /**
  * Boot. The map is fetched up front rather than through kaplay's asset loader
  * so the scene receives plain JSON and stays testable without a game context.
  */
 async function main() {
+  // Mounted first so the title card masks the blank canvas while assets load.
+  mountBootScreen();
+  // A crawlable, screen-reader-friendly version of the content (hidden visually).
+  mountTextFallback();
+
   const res = await fetch(asset("assets/map.json"));
   if (!res.ok) throw new Error(`failed to load map.json: ${res.status}`);
   const map = await res.json();

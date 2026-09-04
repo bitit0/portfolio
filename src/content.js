@@ -276,6 +276,7 @@ export const VFS = {
  * @type {{ label: string, href: string, glyph?: string }[]}
  */
 export const BOOKMARKS = [
+  { label: "Portfolio", href: "https://bitit0.github.io/portfolio/", glyph: "🏠" },
   { label: "GitHub", href: "https://github.com/bitit0", glyph: "🐙" },
   { label: "LinkedIn", href: "https://linkedin.com/in/nathanvanngo", glyph: "💼" },
   { label: "Email", href: "mailto:nathan.ngo44@gmail.com", glyph: "✉️" },

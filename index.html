@@ -28,6 +28,22 @@
   <body>
     <canvas id="game" tabindex="0"></canvas>
 
+    <!-- Non-JS fallback (the interactive version needs JavaScript). Kept minimal
+         on purpose; the full text version is injected by src/ui/textFallback.js
+         for JS-capable crawlers and screen readers. -->
+    <noscript>
+      <div style="max-width: 640px; margin: 2rem auto; padding: 1rem; font-family: system-ui">
+        <h1>Nathan Ngo — Software Engineer, Boston</h1>
+        <p>This portfolio is an interactive game and needs JavaScript enabled.</p>
+        <ul>
+          <li><a href="assets/resume.pdf">Résumé (PDF)</a></li>
+          <li><a href="https://github.com/bitit0">GitHub</a></li>
+          <li><a href="https://linkedin.com/in/nathanvanngo">LinkedIn</a></li>
+          <li><a href="mailto:nathan.ngo44@gmail.com">Email</a></li>
+        </ul>
+      </div>
+    </noscript>
+
     <!-- DOM overlays layered above the canvas. Kept out of the canvas on purpose:
          real scrolling, selectable text and working links come for free. -->
     <div id="dialogue" class="overlay" hidden></div>

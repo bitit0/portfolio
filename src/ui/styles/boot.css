@@ -1,0 +1,30 @@
+/* Boot / title screen. Sits above everything; fades out on dismiss.
+   The name, characters and prompt are all drawn on the canvas. */
+
+#bootscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #05060a;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}
+
+#bootscreen.boot-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-noise {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bootscreen {
+    transition: none;
+  }
+}

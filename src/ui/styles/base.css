@@ -54,3 +54,18 @@ body {
   -webkit-user-select: text;
   user-select: text;
 }
+
+/* The crawlable/screen-reader text version (src/ui/textFallback.js): present in
+   the DOM and read by assistive tech and search engines, but visually hidden. */
+.sr-content {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

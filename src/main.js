@@ -5,12 +5,14 @@ import { registerRoomScene } from "./scenes/room.js";
 import { mountTouchControls } from "./ui/touchControls.js";
 import { mountBootScreen } from "./ui/bootScreen.js";
 import { mountTextFallback } from "./ui/textFallback.js";
+import { mountQuestLog } from "./ui/questLog.js";
 import "./ui/styles/base.css";
 import "./ui/styles/dialogue.css";
 import "./ui/styles/desktop.css";
 import "./ui/styles/credits.css";
 import "./ui/styles/touch.css";
 import "./ui/styles/boot.css";
+import "./ui/styles/quest.css";
 
 /**
  * Boot. The map is fetched up front rather than through kaplay's asset loader
@@ -21,6 +23,8 @@ async function main() {
   mountBootScreen();
   // A crawlable, screen-reader-friendly version of the content (hidden visually).
   mountTextFallback();
+  // Objectives HUD, top-right.
+  mountQuestLog();
 
   const res = await fetch(asset("assets/map.json"));
   if (!res.ok) throw new Error(`failed to load map.json: ${res.status}`);

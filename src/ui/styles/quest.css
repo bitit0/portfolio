@@ -1,0 +1,59 @@
+/* Quest / objectives HUD, pinned top-right. Non-interactive overlay. */
+
+#questlog {
+  position: fixed;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 8;
+  min-width: 8.5rem;
+  padding: 0.55rem 0.8rem 0.6rem;
+  background: rgb(22 20 31 / 82%);
+  border: 2px solid var(--edge);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: var(--font-pixel);
+  font-size: 0.82rem;
+  pointer-events: none;
+  user-select: none;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 45%);
+}
+
+.quest-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.quest-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quest-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+
+.quest-check {
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid var(--ink-dim);
+  border-radius: 3px;
+}
+
+.quest-item.is-done .quest-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.quest-item.is-done .quest-label {
+  color: var(--ink-dim);
+  text-decoration: line-through;
+}

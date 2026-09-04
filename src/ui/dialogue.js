@@ -1,5 +1,6 @@
 import { pushLayer, popLayer } from "../uiState.js";
 import { DIALOGUE_CHARS_PER_SECOND, INTERACT_KEYS_DOM } from "../constants.js";
+import { playClick } from "../sfx.js";
 
 /**
  * The examine-an-object text box. DOM, not canvas: wrapping, scaling and real
@@ -135,6 +136,7 @@ function advance() {
   if (!state) return;
   const line = state.entry.lines[state.page];
 
+  // First press while typing just completes the line — no advance, no sound.
   if (state.typed < line.length) {
     stopTyping();
     state.textEl.textContent = line;
@@ -146,6 +148,7 @@ function advance() {
     closeDialogue();
     return;
   }
+  playClick(); // the press actually moves to the next line
   state.page += 1;
   renderPage();
 }

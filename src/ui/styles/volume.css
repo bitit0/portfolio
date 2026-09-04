@@ -1,0 +1,42 @@
+/* SFX volume control, pinned bottom-left. Interactive (unlike the quest HUD). */
+
+#volumebar {
+  position: fixed;
+  left: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: rgb(22 20 31 / 82%);
+  border: 2px solid var(--edge);
+  border-radius: 8px;
+  font-family: var(--font-pixel);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 45%);
+}
+
+.vol-mute {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  font-size: 0.95rem;
+  line-height: 1;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.vol-slider {
+  width: 6rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.vol-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+}

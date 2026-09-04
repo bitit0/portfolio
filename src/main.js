@@ -6,6 +6,7 @@ import { mountTouchControls } from "./ui/touchControls.js";
 import { mountBootScreen } from "./ui/bootScreen.js";
 import { mountTextFallback } from "./ui/textFallback.js";
 import { mountQuestLog } from "./ui/questLog.js";
+import { mountVolumeBar } from "./ui/volumeBar.js";
 import "./ui/styles/base.css";
 import "./ui/styles/dialogue.css";
 import "./ui/styles/desktop.css";
@@ -13,6 +14,7 @@ import "./ui/styles/credits.css";
 import "./ui/styles/touch.css";
 import "./ui/styles/boot.css";
 import "./ui/styles/quest.css";
+import "./ui/styles/volume.css";
 
 /** Boot. The map is fetched as plain JSON (not via kaplay's loader) so the scene
  *  stays testable without a game context. */
@@ -28,6 +30,7 @@ async function main() {
   loadGameAssets(map);
   registerRoomScene();
   mountTouchControls();
+  mountVolumeBar(); // after touch controls, so it stays tappable over the joystick zone
 
   // Build the room only once assets have decoded — sprite cuts register on load,
   // so k.sprite() any earlier throws. Registering onLoad now can't miss the event.

@@ -1,11 +1,6 @@
 /**
- * Renders a text node as light markdown.
- *
- * Intentionally a hand-rolled subset rather than a markdown dependency: the
- * content is ours, the supported syntax is fixed, and this keeps the bundle to
- * the game engine alone.
- *
- * Supports: # ## ###, - lists, ``` fences, **bold**, `code`, [text](url).
+ * Renders a text node as light markdown — a hand-rolled subset (no dependency)
+ * supporting # ## ###, - lists, ``` fences, **bold**, `code`, [text](url).
  */
 
 /** @param {import("../../../content.js").VfsNode} node */

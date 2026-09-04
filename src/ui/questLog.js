@@ -1,10 +1,6 @@
 /**
- * A small quest / objectives tracker in the top-right corner.
- *
- * DOM HUD rather than canvas, like the other overlays — it stays sharp at any
- * camera zoom and is non-interactive (pointer-events: none), so it never eats a
- * click meant for the room. Objectives are marked done by adding `is-done` to
- * the matching item, so wiring one up to real progress later is a one-liner.
+ * Top-right quest / objectives HUD. DOM, non-interactive (pointer-events: none).
+ * Mark a quest done by adding `is-done` to its item — see complete() below.
  */
 
 /** @type {{ id: string, label: string }[]} */

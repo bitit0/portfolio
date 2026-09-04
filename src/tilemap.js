@@ -2,11 +2,8 @@ import k from "./kaplayCtx.js";
 import { Z } from "./constants.js";
 
 /**
- * Renders Tiled tile layers.
- *
- * Tiled stores each cell as a global tile id (GID). A GID is resolved by
- * finding the tileset with the greatest `firstgid` that is <= the GID; the
- * frame index within that tileset is `gid - firstgid`. GID 0 means empty.
+ * Renders Tiled tile layers. Each cell is a global tile id (GID); resolve it via
+ * the tileset with the greatest firstgid <= GID, frame = gid - firstgid, 0 = empty.
  */
 
 /** Tiled packs flip flags into the top 3 bits of the GID; masking them off with
@@ -37,12 +34,9 @@ function resolveGid(map, gid) {
 }
 
 /**
- * Draws every tile layer in the map.
- *
- * Layers render in file order, which is the order Tiled shows them, so a layer
- * lower in Tiled's list draws underneath. The one exception is a layer named
- * "above": it renders on top of the player so wall tops and hanging decor can
- * occlude them — that is how you get art that sits "in front of" the character.
+ * Draws every tile layer in file order (Tiled's stacking order). The exception
+ * is a layer named "above", which renders over the player so wall tops and decor
+ * can occlude them.
  *
  * @param {object} map
  * @param {{ aboveLayerName?: string }} [opts]

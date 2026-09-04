@@ -1,16 +1,10 @@
 /**
- * Exports every distinct sprite in the cyberpunk sheet as its own PNG, and
- * refreshes the Tiled "Collection of Images" tileset in map.json.
+ * Exports each sprite in the cyberpunk sheet as its own PNG and refreshes the
+ * "Collection of Images" tileset in map.json.  `node scripts/export-sprites.mjs`
  *
- *   node scripts/export-sprites.mjs
- *
- * Sprites are found by flood-filling islands of non-transparent pixels, then
- * curated rects (below) override any islands they contain — several objects are
- * drawn as multiple islands (the computer is three: two side panels and a
- * monitor) and would otherwise export in pieces.
- *
- * Existing tile ids are preserved, so objects already placed in Tiled keep
- * pointing at the right art. New sprites are appended.
+ * Sprites are auto-found by flood-filling non-transparent islands; curated rects
+ * (below) override islands they contain, since some objects are drawn as several
+ * islands. Existing tile ids are preserved so placed objects keep their art.
  */
 import fs from "node:fs";
 import zlib from "node:zlib";

@@ -1,10 +1,5 @@
-/**
- * Stand-in visuals so the whole game is playable before any art exists.
- *
- * Step 5 of the build replaces these `k.rect` fills with `k.sprite` calls
- * against the real tileset; the map, collisions and dialogue keys do not change.
- * Colours are keyed by the object names in public/assets/map.json.
- */
+/** Fallback fills for any object whose sprite is missing, so the room stays
+ *  playable. Keyed by object name in public/assets/map.json. */
 
 /** @type {Record<string, [number, number, number]>} */
 export const OBJECT_COLORS = {

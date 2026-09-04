@@ -23,11 +23,8 @@ export function childrenOf(node) {
   return node.children ?? [];
 }
 
-/**
- * A stable id for a node, used to key its window so reopening focuses rather
- * than duplicates. Path-based because names are only unique within a folder.
- * @param {string[]} pathNames
- */
+/** Stable, path-based id keying a node's window (reopening focuses, not duplicates).
+ *  @param {string[]} pathNames */
 export function idForPath(pathNames) {
   return pathNames.join("/");
 }

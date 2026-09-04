@@ -1,16 +1,9 @@
 /**
- * Boot / title screen: a full field of random "hacker" characters. The outer
- * characters fade first and the fade closes inward, leaving only the characters
- * that fall inside the letters of the name — so the code collapses into
- * "Nathan Ngo" spelled out of the same glyphs, then a "click to continue".
- *
- * The name is a mask: cells whose centre lands inside the rendered name persist
- * (and keep flickering); every other cell fades as the reveal front sweeps from
- * the edges to the centre. Mounted before assets load, so it also masks the
- * blank-canvas moment on first paint.
- *
- * Any click or key press dismisses it. Respects prefers-reduced-motion by
- * drawing the final card immediately with no animation.
+ * Boot / title screen. A field of random characters fades from the edges inward;
+ * cells inside the name (a text mask) persist, so the field collapses into
+ * "Nathan Ngo" spelled in the surviving glyphs, then "click to continue". Mounted
+ * before assets load, so it also masks the blank-canvas moment. Dismissed by any
+ * click/key; respects prefers-reduced-motion.
  */
 
 const CELL_W = 13; // px per glyph column

@@ -1,11 +1,8 @@
 /**
- * A crawlable, screen-reader-friendly text version of the portfolio.
- *
- * The site is a WebGL canvas, so its real content — resume, projects, contact —
- * is invisible to search engines, link scrapers and screen readers. This builds
- * a semantic <main> from the very same data the game uses (src/content.js), so
- * there is one source of truth and the two can never drift. It is visually
- * hidden (see .sr-content) but present in the DOM and read by assistive tech.
+ * A crawlable, screen-reader-friendly <main> built from the same content.js data
+ * the game uses (one source of truth). The site is a WebGL canvas, so without
+ * this its content is invisible to search engines and assistive tech. Visually
+ * hidden (.sr-content) but present in the DOM.
  */
 
 import { VFS, DIALOGUE } from "../content.js";

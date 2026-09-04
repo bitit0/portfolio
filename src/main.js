@@ -14,16 +14,11 @@ import "./ui/styles/touch.css";
 import "./ui/styles/boot.css";
 import "./ui/styles/quest.css";
 
-/**
- * Boot. The map is fetched up front rather than through kaplay's asset loader
- * so the scene receives plain JSON and stays testable without a game context.
- */
+/** Boot. The map is fetched as plain JSON (not via kaplay's loader) so the scene
+ *  stays testable without a game context. */
 async function main() {
-  // Mounted first so the title card masks the blank canvas while assets load.
-  mountBootScreen();
-  // A crawlable, screen-reader-friendly version of the content (hidden visually).
-  mountTextFallback();
-  // Objectives HUD, top-right.
+  mountBootScreen(); // masks the blank canvas while assets load
+  mountTextFallback(); // hidden, crawlable/screen-reader version of the content
   mountQuestLog();
 
   const res = await fetch(asset("assets/map.json"));
@@ -34,15 +29,11 @@ async function main() {
   registerRoomScene();
   mountTouchControls();
 
-  // The room CANNOT be built before loading finishes. loadSpriteAtlas only
-  // registers its named cuts once the image has decoded, so calling
-  // k.sprite("bed") any earlier throws on a null asset. Registering onLoad in
-  // the same tick as loadGameAssets() means it cannot miss the event.
+  // Build the room only once assets have decoded — sprite cuts register on load,
+  // so k.sprite() any earlier throws. Registering onLoad now can't miss the event.
   k.onLoad(() => {
     k.go("room", map);
-    // kaplay binds key events to the canvas, so without focus the game is
-    // unresponsive until the user happens to click it.
-    document.getElementById("game")?.focus();
+    document.getElementById("game")?.focus(); // kaplay reads keys off the canvas
   });
 
   k.onLoadError((name, failed) => {

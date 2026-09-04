@@ -1,11 +1,7 @@
 /**
- * A minimal in-OS web browser.
- *
- * Not a real embedded browser: almost every site worth linking (GitHub,
- * LinkedIn, …) forbids being framed via X-Frame-Options / CSP, so an <iframe>
- * would just show a blank box. Instead this is an honest launcher — a start
- * page of bookmarks plus an address bar, both of which open the destination in
- * a real browser tab.
+ * A minimal in-OS "browser": a bookmarks start page plus an address bar, both
+ * of which open the destination in a real tab. Not an embedded browser — most
+ * sites forbid being framed (X-Frame-Options / CSP), so an iframe would be blank.
  */
 
 import { BOOKMARKS } from "../../../content.js";

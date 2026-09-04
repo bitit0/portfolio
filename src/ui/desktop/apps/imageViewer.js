@@ -8,8 +8,7 @@ export function imageViewer(node) {
   img.alt = node.name;
   img.decoding = "async";
 
-  // A missing screenshot should say so, not render a broken-image glyph in the
-  // middle of the portfolio.
+  // Say so on a missing image, rather than showing a broken-image glyph.
   img.addEventListener("error", () => {
     el.replaceChildren(
       Object.assign(document.createElement("p"), {

@@ -13,10 +13,8 @@ import { getMove } from "../touchInput.js";
 const HALF_HEIGHT = 8;
 
 /**
- * Creates the player, using the Ninja Adventure walk spritesheet registered in
- * src/assets.js. Animation names follow `walk-<dir>` / `idle-<dir>`.
- *
- * @param {{ x: number, y: number }} spawn Centre point, in world units.
+ * Creates the player. Animations are named `walk-<dir>` / `idle-<dir>`.
+ * @param {{ x: number, y: number }} spawn Centre point, world units.
  */
 export function makePlayer(spawn) {
   const player = k.add([
@@ -32,8 +30,7 @@ export function makePlayer(spawn) {
     { facing: "down" },
   ]);
 
-  // play() restarts the animation from frame 0, so calling it every frame would
-  // freeze the walk cycle on its first frame. Only switch when it changes.
+  // play() restarts at frame 0, so only switch when the anim actually changes.
   let currentAnim = "idle-down";
   const setAnim = (name) => {
     if (name === currentAnim) return;
@@ -42,8 +39,7 @@ export function makePlayer(spawn) {
   };
 
   player.onUpdate(() => {
-    // Depth sorting: everything in the room sorts by the y of its bottom edge,
-    // so the player walks in front of the bed but behind the back wall.
+    // Sort by bottom edge, so the player is in front of lower things, behind higher.
     player.z = player.pos.y + HALF_HEIGHT;
 
     // The single guard that freezes the player while an overlay is open.

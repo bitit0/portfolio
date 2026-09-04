@@ -1,10 +1,6 @@
 /**
- * Every piece of user-facing copy in the portfolio lives here.
- *
- * Nothing in this file is engine code — editing your portfolio should never
- * mean touching a scene or an entity. Adding a new examinable object is:
- *   1. add a rect to the "objects" layer in public/assets/map.json
- *   2. add an entry here under the same name
+ * All user-facing copy. Not engine code — a new examinable object is a rect in
+ * map.json's "objects" layer plus an entry here under the same name.
  */
 
 import { asset } from "./paths.js";
@@ -17,18 +13,14 @@ import { asset } from "./paths.js";
  */
 
 /**
- * Only the objects listed here are examinable. Everything else in the room is
- * scenery — drawn and solid, but silent. To make something examinable, give it
- * a matching name in Tiled and add an entry below; to silence something, remove
- * its entry.
- *
+ * Objects listed here are examinable; everything else in the room is silent
+ * scenery.
  * @type {Record<string, DialogueEntry>}
  */
 export const DIALOGUE = {
   computer: {
     label: "Computer",
-    // Never shown — the computer opens the desktop overlay instead of a
-    // dialogue. Kept so the prompt has a label and the key is documented.
+    // Never shown — the computer opens the desktop overlay. Kept for the label.
     lines: [],
   },
   window: {
@@ -259,7 +251,7 @@ export const VFS = {
         {
           name: "screenshot.png",
           type: "image",
-          src: asset("assets/shots/placeholder.png"),
+          src: asset("assets/shots/screenshot.png"),
         },
       ],
     },

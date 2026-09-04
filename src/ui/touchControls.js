@@ -1,11 +1,7 @@
 /**
- * On-screen gamepad for touch devices: a floating joystick on the left and an
- * interact button on the right, overlaid on the game canvas.
- *
- * Overlaid rather than placed below the canvas on purpose — a control strip
- * outside the game only has room in portrait, and vanishes in landscape.
- * Floating it over the corners works in either orientation. Shown only on
- * touch devices (coarse pointer, no hover), so desktop stays keyboard-only.
+ * On-screen gamepad for touch devices: a floating joystick (left) and interact
+ * button (right), overlaid on the canvas so it works in any orientation. Shown
+ * only on touch devices (coarse pointer, no hover); desktop stays keyboard-only.
  */
 
 import { setMove, clearMove, fireInteract } from "../touchInput.js";

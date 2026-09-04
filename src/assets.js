@@ -2,45 +2,30 @@ import k from "./kaplayCtx.js";
 import { asset } from "./paths.js";
 import { tilesetSpriteName } from "./tilemap.js";
 
-/**
- * Sprite registration. Everything drawn from a real image is declared here.
- */
+/** Sprite registration. Everything drawn from a real image is declared here. */
 
 const CYBER = "assets/pixel_cyberpunk_interior_free_1.0.1/pixel-cyberpunk-interior.png";
 
-/** Source size of the cyberpunk sheet, needed to normalise pixel rects to quads. */
+/** Source size of the cyberpunk sheet, to normalise pixel rects to quads. */
 const CYBER_SHEET = /** @type {[number, number]} */ ([672, 352]);
 
-/**
- * Walk.png is 64x64 = a 4x4 grid, and it is COLUMN-major: each column is a
- * facing direction, each row is a frame of that direction's walk cycle.
- * kaplay numbers sliced frames row-major, so a direction's frames are strided
- * by 4 rather than contiguous — hence `frames: [...]` instead of `from`/`to`.
- *
- * Verified by measuring skin-tone pixels per column: col 0 has the most (face
- * on), col 1 the fewest (back of head), and cols 2/3 are mirror images with
- * centroids 1.03px either side of centre.
- */
+/** Walk.png is a column-major 4x4 grid (column = facing, row = frame). kaplay
+ *  slices row-major, so each direction's frames are strided by 4. */
 const DIRECTION_COLUMN = { down: 0, up: 1, left: 2, right: 3 };
 
 const walkFrames = (column) => [column, column + 4, column + 8, column + 12];
 
-/**
- * Floor and wall tiles, still cut from the main sheet by pixel rect because
- * they are painted into tile layers rather than placed as objects.
- */
+/** Floor/wall tiles, cut from the sheet by pixel rect (they're painted into
+ *  tile layers, not placed as objects). */
 const SURFACES = {
   floorTile: { x: 0, y: 64, w: 16, h: 16 },
   wallTile: { x: 80, y: 16, w: 16, h: 16 },
 };
 
 /**
- * Registers one sprite cut out of a larger sheet by pixel rect.
- *
- * Deliberately NOT loadSpriteAtlas: that only registers its named cuts inside a
- * callback that runs after the global load event, so a scene built on onLoad
- * still finds the name unregistered and throws. loadSprite registers the name
- * synchronously, which removes the race entirely.
+ * Registers one sprite cut from a sheet by pixel rect. loadSprite (not
+ * loadSpriteAtlas) so the name registers synchronously — the atlas variant
+ * registers after the load event, racing scenes built on onLoad.
  *
  * @param {string} name
  * @param {string} url
@@ -53,30 +38,21 @@ function loadSpriteRegion(name, url, [sheetW, sheetH], region) {
   });
 }
 
-/**
- * Registers every tileset the map references, sliced into its tile grid, so the
- * tile-layer renderer can address tiles by frame index.
- *
- * @param {object} map Parsed Tiled JSON.
- */
+/** Registers every tileset the map references, sliced into its tile grid.
+ *  @param {object} map Parsed Tiled JSON. */
 function loadMapTilesets(map) {
   for (const ts of map.tilesets) {
     if (ts.source) {
       console.warn(
-        `[assets] tileset "${ts.name}" is external (.tsx). Re-import it in ` +
-          `Tiled with "Embed in map" ticked.`,
+        `[assets] tileset "${ts.name}" is external (.tsx); re-import with "Embed in map".`,
       );
       continue;
     }
     if (ts.spacing || ts.margin) {
-      console.warn(
-        `[assets] tileset "${ts.name}" uses spacing/margin, which kaplay's ` +
-          `slicing cannot express — tiles will be misaligned.`,
-      );
+      console.warn(`[assets] tileset "${ts.name}" uses spacing/margin, which kaplay can't slice.`);
     }
-    // A "Collection of Images" tileset has one image per tile instead of one
-    // sheet. Each becomes its own sprite, named by the tile's file stem, which
-    // is how furniture placed in Tiled resolves to art here.
+    // "Collection of Images" tileset: one image per tile, each registered as a
+    // sprite named by its file stem — how Tiled-placed furniture finds its art.
     if (Array.isArray(ts.tiles) && ts.tiles.length && !ts.image) {
       for (const tile of ts.tiles) {
         if (!tile.image) continue;
@@ -90,7 +66,7 @@ function loadMapTilesets(map) {
     }
     const columns = ts.columns || Math.floor(ts.imagewidth / ts.tilewidth);
     const rows = Math.ceil((ts.tilecount || columns) / columns);
-    // ts.image is relative to map.json, which lives in public/assets/.
+    // ts.image is relative to map.json (public/assets/).
     k.loadSprite(tilesetSpriteName(ts), asset(`assets/${ts.image}`), {
       sliceX: columns,
       sliceY: rows,
@@ -106,17 +82,11 @@ export function loadGameAssets(map) {
   const anims = {};
   for (const [dir, column] of Object.entries(DIRECTION_COLUMN)) {
     anims[`walk-${dir}`] = { frames: walkFrames(column), loop: true, speed: 8 };
-    // Idle is the first frame of that direction's cycle.
-    anims[`idle-${dir}`] = { frames: [column], loop: false, speed: 1 };
+    anims[`idle-${dir}`] = { frames: [column], loop: false, speed: 1 }; // first frame of the cycle
   }
 
-  // The cyberpunk pack is furniture only — no character art — so the player
-  // sprite comes from the Ninja Adventure pack (CC0), copied into assets/player/.
-  k.loadSprite("player", asset("assets/player/Walk.png"), {
-    sliceX: 4,
-    sliceY: 4,
-    anims,
-  });
+  // Player art is from the Ninja Adventure pack (CC0); the cyberpunk pack is furniture only.
+  k.loadSprite("player", asset("assets/player/Walk.png"), { sliceX: 4, sliceY: 4, anims });
 
   const sheet = asset(CYBER);
   for (const [name, region] of Object.entries(SURFACES)) {
@@ -124,22 +94,11 @@ export function loadGameAssets(map) {
   }
 }
 
-/**
- * Map object name -> registered sprite name.
- *
- * Anything not listed falls back to its placeholder rect, so the room stays
- * playable while art is still being sourced. "plant" is deliberately absent:
- * a cyberpunk interior pack has no houseplant.
- */
 /** Sprite name for one image of a collection tileset. */
 export const collectionSpriteName = (stem) => `art:${stem}`;
 
 /**
- * Resolves a Tiled tile-object gid to a registered sprite name.
- *
- * Furniture is placed in Tiled now, so which art an object uses is map data,
- * not something declared here.
- *
+ * Resolves a Tiled tile-object gid to a registered sprite name (or null).
  * @param {object} map
  * @param {number} gid
  * @returns {string | null}

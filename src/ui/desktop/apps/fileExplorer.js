@@ -1,11 +1,8 @@
 import { iconFor, childrenOf, sortNodes } from "../vfs.js";
 
 /**
- * Folder browser.
- *
- * Navigates in place with a breadcrumb rather than spawning a window per
- * folder — a few clicks into `projects/` should not leave five windows behind.
- * Non-folder nodes are handed to `openNode`, which decides which app opens.
+ * Folder browser. Navigates in place via a breadcrumb (one window, not one per
+ * folder); non-folder nodes are handed to `openNode`, which picks the app.
  *
  * @param {import("../../../content.js").VfsNode} startNode
  * @param {string[]} startPath Names from the root down to startNode.

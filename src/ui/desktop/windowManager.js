@@ -197,11 +197,8 @@ export function createWindowManager(layer) {
 
     layer.append(el);
 
-    // Clamp size and position now that the window has a measurable box, so it
-    // can never be born larger than — or hanging off the edge of — the screen.
-    // The drag handler clamps too, but that only fires once you grab the window;
-    // without this, a tall window (the PDF viewer) spawns below the bottom edge
-    // and only snaps inside on the first drag.
+    // Clamp size/position on open so a window is never born bigger than, or off,
+    // the screen (the drag handler only clamps once you grab it).
     const maxW = layer.clientWidth;
     const maxH = layer.clientHeight;
     if (el.offsetWidth > maxW) el.style.width = `${maxW}px`;
@@ -239,10 +236,7 @@ export function createWindowManager(layer) {
   };
 }
 
-/**
- * Titlebar dragging, clamped so a window can never be dragged somewhere it
- * cannot be dragged back from.
- */
+/** Titlebar dragging, clamped inside the desktop bounds. */
 function makeDraggable(el, handle, bounds) {
   let startX = 0;
   let startY = 0;
@@ -317,11 +311,8 @@ function clamp(v, lo, hi) {
   return Math.min(Math.max(v, lo), hi);
 }
 
-/**
- * Runs an app's optional `__cleanup` hook. Apps that hold live resources (the
- * media player's <audio>, timers, etc.) set it on their root element so the
- * window manager can release them when the window closes or its body is swapped.
- */
+/** Runs an app's optional `__cleanup` hook — apps holding live resources (the
+ *  media player's <audio>) set it so we can release them on close/swap. */
 function callCleanup(node) {
   if (node && typeof node.__cleanup === "function") node.__cleanup();
 }

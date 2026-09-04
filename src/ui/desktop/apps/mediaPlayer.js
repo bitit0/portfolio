@@ -1,9 +1,6 @@
 /**
- * A small audio player over the PLAYLIST declared in src/content.js.
- *
- * One shared <audio> element drives everything; the UI just reflects its state.
- * Adding songs is data-only: drop files in public/assets/music/ and list them
- * in PLAYLIST — nothing here needs to change.
+ * Audio player over the PLAYLIST in src/content.js. One <audio> drives it; the
+ * UI reflects its state. Adding songs is data-only (edit PLAYLIST).
  */
 
 import { PLAYLIST } from "../../../content.js";
@@ -142,11 +139,9 @@ export function mediaPlayer() {
     seeking = false;
   });
 
-  // The window manager calls this when the player is torn down — the window
-  // closes, its content is swapped, or the whole desktop is dismissed. A DOM
-  // MutationObserver can't catch that: leaving the computer detaches whole
-  // ancestors at once (root.innerHTML = "") without mutating our own parent, so
-  // the audio would keep playing and stack up on the next open.
+  // Called by the window manager on close/swap/desktop-dismiss to stop the audio.
+  // (A MutationObserver can't catch teardown — leaving the computer detaches
+  // ancestors at once without mutating our own parent.)
   el.__cleanup = () => {
     audio.pause();
     audio.src = "";

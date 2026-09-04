@@ -3,16 +3,9 @@ import { collectionSpriteName } from "./assets.js";
 import { Z } from "./constants.js";
 
 /**
- * Draws hand-placed room outlines.
- *
- * In Tiled, draw a plain rectangle on the "outline" object layer along an edge
- * and name it top / bottom / left / right. The matching strip is repeated along
- * the rectangle, so one rectangle covers a whole edge no matter how long — the
- * strips themselves are only 16px, and placing them one at a time would be
- * miserable.
- *
- * Thickness comes from the sprite, not the rectangle: only the rectangle's
- * length matters, so a roughly-drawn box still lands on the right pixels.
+ * Draws room outlines from the "outline" object layer: a plain rectangle named
+ * top/bottom/left/right is filled by repeating the matching 16px strip along its
+ * length. Thickness is the sprite's; only the rectangle's length matters.
  */
 
 const KINDS = ["top", "bottom", "left", "right"];
@@ -29,16 +22,8 @@ function paintedMask(map) {
   return mask;
 }
 
-/**
- * Which strip a rectangle wants.
- *
- * An explicit name wins. Otherwise the room decides: each strip has a dark side
- * meant to face out and a light side meant to face in, so we sample the painted
- * cells either side of the rectangle and put the dark edge on whichever side is
- * empty. That way a rectangle dropped anywhere faces the right way without
- * having to reason about it — and a name like "middle" no longer silently picks
- * the wrong one.
- */
+/** Which strip a rectangle wants. An explicit name wins; otherwise sample the
+ *  painted cells on each side and face the dark edge toward the empty (outside) one. */
 function kindOf(obj, map, mask) {
   const label = `${obj.name ?? ""} ${obj.type ?? obj.class ?? ""}`.toLowerCase();
   const named = KINDS.find((kind) => label.includes(kind));
@@ -71,7 +56,7 @@ function kindOf(obj, map, mask) {
   }
 
   if (sideA !== sideB) {
-    // Room on side A means the outside is side B, and vice versa.
+    // More room on side A → outside is side B.
     if (vertical) return sideA > sideB ? "right" : "left";
     return sideA > sideB ? "bottom" : "top";
   }

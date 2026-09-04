@@ -1,8 +1,6 @@
 /**
- * Views a PDF node. The browser's built-in PDF viewer does the real work —
- * scroll, zoom, print and download all come free from an <iframe>, the same
- * "let the platform handle it" approach the rest of this desktop uses.
- *
+ * Views a PDF in an <iframe> — the browser's built-in viewer handles scroll,
+ * zoom, print and download.
  * @param {import("../../../content.js").VfsNode} node
  */
 export function pdfViewer(node) {
@@ -15,9 +13,8 @@ export function pdfViewer(node) {
   frame.loading = "lazy";
   el.append(frame);
 
-  // A missing file should say so with a download link, not show an empty frame.
+  // Missing file or a browser that blocks inline PDFs: offer it as a link.
   frame.addEventListener("error", () => showFallback());
-  // Some browsers block inline PDF rendering; offer the file directly if so.
   function showFallback() {
     el.replaceChildren(
       Object.assign(document.createElement("p"), {

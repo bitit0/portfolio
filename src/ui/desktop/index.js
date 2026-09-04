@@ -10,10 +10,8 @@ import { mediaPlayer } from "./apps/mediaPlayer.js";
 import { iconFor, childrenOf, sortNodes, idForPath } from "./vfs.js";
 
 /**
- * The in-game computer: a fake desktop OS mounted over the canvas.
- *
- * Mounted and torn down on each use rather than kept hidden, so walking away
- * from the computer and coming back gives a clean desktop.
+ * The in-game computer: a fake desktop OS over the canvas, rebuilt on each use
+ * so it always opens clean.
  */
 
 const root = /** @type {HTMLElement} */ (document.getElementById("desktop"));
@@ -21,21 +19,15 @@ const root = /** @type {HTMLElement} */ (document.getElementById("desktop"));
 /** @type {ReturnType<typeof createWindowManager> | null} */
 let wm = null;
 
-/**
- * Which app renders a node. Adding a file type means adding one entry here and
- * one renderer — nothing else in the OS needs to know about it.
- */
+/** Which app renders each node type — add a type by adding one entry + renderer. */
 const APPS = {
   text: { render: textViewer, width: 520, height: 380 },
   image: { render: imageViewer, width: 420, height: 340 },
   pdf: { render: pdfViewer, width: 680, height: 560 },
 };
 
-/**
- * Apps pinned to the dock. These are programs, not files — Files opens the
- * explorer at the filesystem root, the others are standalone windows. `id`
- * matches the window each one opens, so the dock can show a running indicator.
- */
+/** Dock-pinned apps (programs, not files). `id` matches the window each opens,
+ *  so the dock can show a running indicator. */
 const LAUNCHERS = [
   { glyph: "🗂", label: "Files", id: idForPath([VFS.name]), open: () => openNode(VFS, [VFS.name]) },
   { glyph: "🌐", label: "Browser", id: "app:browser", open: openBrowser },
@@ -111,7 +103,7 @@ export function openDesktop() {
   renderDock(/** @type {HTMLElement} */ (root.querySelector(".os-dock")));
   startClock();
 
-  // Hand keyboard focus to the OS so the canvas stops receiving keystrokes.
+  // Focus the OS so the canvas stops receiving keystrokes.
   document.getElementById("game")?.blur();
   /** @type {HTMLElement} */ (root.querySelector(".os-exit")).focus();
 
@@ -129,11 +121,8 @@ export function closeDesktop() {
   document.getElementById("game")?.focus();
 }
 
-/**
- * Drives the top-bar clock and, in the same tick, refreshes the dock's
- * running-app indicators — so closing a window from its titlebar clears the
- * dock dot within a second without wiring the two together.
- */
+/** Drives the top-bar clock; the same tick refreshes the dock indicators, so a
+ *  window closed from its titlebar clears its dock dot without extra wiring. */
 function startClock() {
   const paint = () => {
     const clock = root.querySelector(".os-clock");
@@ -170,22 +159,15 @@ function updateDockIndicators() {
   }
 }
 
-/**
- * Escape peels one layer at a time: the topmost window first, and only once
- * nothing is open does it leave the computer. Closing the whole OS on the first
- * press would be infuriating three folders deep.
- */
+/** Escape closes the top window first, and only leaves the computer once no
+ *  windows are open. */
 function handleEscape() {
   if (wm?.closeTopWindow()) return;
   closeDesktop();
 }
 
-/**
- * Draws the desktop shortcuts — one per top-level filesystem entry — behind the
- * window layer, the way a real desktop shows files and folders.
- *
- * @param {HTMLElement} container
- */
+/** Draws desktop shortcuts (one per top-level entry) behind the window layer.
+ *  @param {HTMLElement} container */
 function renderDesktopIcons(container) {
   for (const node of sortNodes(childrenOf(VFS))) {
     const btn = document.createElement("button");
@@ -200,9 +182,8 @@ function renderDesktopIcons(container) {
 }
 
 /**
- * Fills the dock with the pinned apps. Each launcher carries the id of the
- * window it opens, so the dock can light a running indicator beside it.
- *
+ * Fills the dock with the pinned apps (each carries the id of the window it
+ * opens, for the running indicator).
  * @param {HTMLElement} dock
  */
 function renderDock(dock) {

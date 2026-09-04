@@ -2,11 +2,8 @@ import { pushLayer, popLayer } from "../uiState.js";
 import { DIALOGUE_CHARS_PER_SECOND, INTERACT_KEYS_DOM } from "../constants.js";
 
 /**
- * The examine-an-object text box.
- *
- * DOM rather than canvas text: wrapping, scaling with the viewport, and real
- * <a> links for the contact object all come free, and none of it has to be
- * re-solved at 320x240 game resolution.
+ * The examine-an-object text box. DOM, not canvas: wrapping, scaling and real
+ * <a> links all come for free.
  */
 
 const root = /** @type {HTMLElement} */ (document.getElementById("dialogue"));
@@ -49,8 +46,7 @@ export function openDialogue(entry) {
   box.addEventListener("click", advance);
   window.addEventListener("keydown", onKeyDown);
 
-  // Take focus off the canvas so kaplay stops seeing keystrokes at all — the
-  // isUIOpen() guards are the real defence, this is belt and braces.
+  // Blur the canvas so kaplay stops seeing keys (belt and braces over isUIOpen()).
   document.getElementById("game")?.blur();
   box.focus?.();
 

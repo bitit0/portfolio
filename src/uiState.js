@@ -1,13 +1,9 @@
 import { INTERACT_COOLDOWN_MS } from "./constants.js";
 
 /**
- * Tracks which DOM overlays are open on top of the canvas.
- *
- * This is the single guard that stops the player walking around while you are
- * reading a dialogue or browsing the in-game computer. Every input handler in
- * the game checks `isUIOpen()` before doing anything.
- *
- * Layers form a stack so Escape always closes the topmost thing.
+ * The stack of open DOM overlays — the single guard that freezes the player
+ * while a dialogue or the computer is open (every input handler checks
+ * isUIOpen()). A stack, so Escape closes the topmost thing.
  * @typedef {{ name: string, close: () => void }} Layer
  */
 
@@ -16,17 +12,10 @@ const stack = [];
 let lastCloseAt = 0;
 
 /**
- * Keeps kaplay's key state honest while an overlay has focus.
- *
- * Overlays blur the canvas so typing goes to the DOM, but kaplay listens on the
- * canvas — so a key released while an overlay is open never reaches it and stays
- * stuck "down". The player then bolts off the moment the overlay closes, still
- * obeying a key the user let go of.
- *
- * Forwarding just the releases fixes that: hold a key through a dialogue and you
- * keep walking afterwards, let go and you stop, which is what both cases should
- * do. keydown is deliberately not forwarded — the player is frozen anyway, and
- * replaying presses could re-trigger interact handlers.
+ * While an overlay has focus a key release reaches the DOM, not the canvas
+ * kaplay listens on, so it stays stuck "down" and the player bolts on close.
+ * Forwarding just the releases fixes it; keydown is left alone (the player is
+ * frozen, and replaying presses could re-trigger interact handlers).
  */
 function forwardKeyUp(e) {
   const canvas = document.getElementById("game");
@@ -46,10 +35,7 @@ export function isUIOpen() {
   return stack.length > 0;
 }
 
-/**
- * True briefly after an overlay closes. Interact handlers ignore presses during
- * this window so the dismiss keypress does not re-trigger the object.
- */
+/** True briefly after an overlay closes, so the dismiss key doesn't re-fire the object. */
 export function isInteractCoolingDown() {
   return performance.now() - lastCloseAt < INTERACT_COOLDOWN_MS;
 }
@@ -82,8 +68,7 @@ export function closeTopLayer() {
   return true;
 }
 
-// Escape is handled once, globally, rather than per-overlay — otherwise nested
-// overlays each register a listener and a single press closes all of them.
+// Escape handled once globally, so one press doesn't close every nested overlay.
 window.addEventListener("keydown", (e) => {
   if (e.key !== "Escape" || !isUIOpen()) return;
   e.preventDefault();

@@ -1,30 +1,21 @@
 import kaplay from "kaplay";
 
 /**
- * The shared Kaplay context. Imported by every module that needs to touch the
- * game — created once here so scenes and entities agree on one instance.
- *
- * Deliberately NO width/height/stretch/letterbox: the canvas renders at the
- * window's native resolution and src/camera.js zooms the room to fit. Pinning a
- * 320x240 framebuffer and upscaling it is what made canvas text unreadable.
- *
- * `global: false` keeps kaplay's helpers off `window`, so everything is an
- * explicit `k.` call and nothing collides with the DOM overlay code.
+ * The one shared Kaplay context. No width/letterbox on purpose: the canvas
+ * renders at native resolution and src/camera.js zooms to fit (a low-res
+ * framebuffer made text unreadable). `global: false` keeps helpers off `window`.
  */
 const k = kaplay({
   canvas: /** @type {HTMLCanvasElement} */ (document.getElementById("game")),
   crisp: true,
   global: false,
   background: [22, 26, 34],
-  // Match the display so text is rendered at true device resolution rather
-  // than being upscaled by the browser on HiDPI screens.
-  pixelDensity: window.devicePixelRatio || 1,
+  pixelDensity: window.devicePixelRatio || 1, // true device resolution on HiDPI
   debugKey: "f1",
 });
 
-// Dev-only handle. WebGL canvases do not show up in most screenshot tools, so
-// having the context reachable from the console is the difference between
-// debugging the game and guessing at it. Stripped from production builds.
+// Dev-only console handle — WebGL canvases don't screenshot, so this is how you
+// inspect the running game. Stripped from production.
 if (import.meta.env.DEV) {
   /** @type {any} */ (window).__k = k;
 }

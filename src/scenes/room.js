@@ -14,16 +14,12 @@ function layerObjects(map, layerName) {
 }
 
 /**
- * The starter room.
- *
- * Everything positional comes out of public/assets/map.json — this function
- * only decides how each layer is turned into game objects, never where things
- * are. That is what keeps "add a new examinable object" a data-only change.
+ * The room scene. All positions come from map.json; this only turns each layer
+ * into game objects, never decides where things go.
  */
 export function registerRoomScene() {
   k.scene("room", (map) => {
-    // The room's size is whatever the map says, so reshaping it in Tiled just
-    // works — nothing here assumes a rectangle or a fixed width.
+    // Size is whatever the map says — no assumption of a rectangle or fixed width.
     const roomWidth = map.width * map.tilewidth;
     const roomHeight = map.height * map.tileheight;
     setupCamera(roomWidth, roomHeight);
@@ -38,17 +34,14 @@ export function registerRoomScene() {
       );
     }
 
-    // --- Walls: solid, and drawn with their own depth so the player passes
-    //     behind the back wall and in front of nothing. ---
+    // --- Walls: pure collision (the visible walls are painted tiles) ---
     for (const wall of layerObjects(map, "boundaries")) {
       k.add([
         k.pos(wall.x, wall.y),
         k.anchor("topleft"),
         k.area({ shape: new k.Rect(k.vec2(0), wall.width, wall.height) }),
         k.body({ isStatic: true }),
-        // Drawn only with F1 debug on: walls are painted in the map's tile
-        // layers now, so these rects are pure collision.
-        k.opacity(0),
+        k.opacity(0), // invisible except with F1 debug on
         k.rect(wall.width, wall.height),
         "boundary",
       ]);
@@ -66,9 +59,7 @@ export function registerRoomScene() {
 
     setupInteractionSystem(player);
 
-    // --- Controls hint ---
-    // fixed() so it ignores the camera zoom: its size is in screen pixels and
-    // it stays sharp no matter how far the room is scaled up.
+    // --- Controls hint (fixed() → screen pixels, sharp at any zoom) ---
     const hint = k.add([
       k.text(`WASD / arrows to move   ·   Shift to run   ·   ${INTERACT_KEY_LABEL} to examine`, {
         size: UI_HINT_SIZE,

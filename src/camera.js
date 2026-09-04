@@ -1,13 +1,7 @@
 import k from "./kaplayCtx.js";
 
-/**
- * Frames the whole room in the viewport.
- *
- * The room is a single fixed space, so the camera never follows the player — it
- * just zooms so the room fits. World sprites scale up with the zoom (pixel art
- * stays chunky, which is the point); anything with fixed() ignores the zoom and
- * renders at native screen resolution.
- */
+/** Zooms so the whole room fits the viewport — a fixed space, so the camera
+ *  never follows the player. fixed() UI ignores the zoom and stays sharp. */
 export function fitRoomToViewport(roomWidth, roomHeight) {
   const scale = Math.min(k.width() / roomWidth, k.height() / roomHeight);
   k.setCamScale(scale);

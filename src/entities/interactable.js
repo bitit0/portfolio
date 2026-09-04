@@ -25,35 +25,26 @@ import { openDesktop } from "../ui/desktop/index.js";
  */
 
 /**
- * Builds one piece of examinable furniture from a map rect.
- *
- * Furniture is both solid and examinable — the same rect drives the collider,
- * the placeholder fill and the proximity check, so nothing can drift apart.
- *
+ * Builds one furniture entity from a map rect — the same rect drives the
+ * collider, the sprite/placeholder and the proximity check.
  * @param {MapObject} obj
  */
 export function makeInteractable(obj, map) {
   const entry = DIALOGUE[obj.name];
 
-  // Writing dialogue for something is what makes it examinable. Everything else
-  // is scenery: still drawn, still solid, but no prompt and no key press. That
-  // keeps most of the room quiet without needing to mark each piece in Tiled.
-  //
-  // An "interactive" checkbox in Tiled overrides this either way.
+  // Having a DIALOGUE entry is what makes something examinable; everything else
+  // is silent scenery. An "interactive" property in Tiled overrides either way.
   const declared = objectProperty(obj, "interactive", undefined);
   const interactive = declared === undefined ? Boolean(entry) : Boolean(declared);
 
   if (interactive && !entry) {
-    // Only worth warning about when something asked to be examinable and has
-    // nothing to say — an unnamed prop having no entry is entirely normal.
     console.warn(
       `[room] "${obj.name || "(unnamed)"}" is marked interactive but has no DIALOGUE entry in src/content.js`,
     );
   }
 
-  // A Tiled tile object carries a gid naming its art. Those are anchored
-  // BOTTOM-left, unlike plain rectangles which are top-left, so the drawing
-  // origin has to be lifted by the height.
+  // Tile objects (gid) are anchored bottom-left, unlike plain rects (top-left),
+  // so lift the draw origin by the height.
   const sprite = obj.gid ? spriteForGid(map, obj.gid) : null;
   const top = obj.gid ? obj.y - obj.height : obj.y;
 
@@ -75,9 +66,8 @@ export function makeInteractable(obj, map) {
     k.anchor("topleft"),
     k.area(),
     k.body({ isStatic: true }),
-    // Depth is the bottom edge, so things lower on screen draw in front. That
-    // breaks for objects stacked ON others (a computer on a desk sorts behind
-    // it), so a "zBias" custom property in Tiled can lift one above another.
+    // Depth is the bottom edge; a "zBias" Tiled property lifts things stacked on
+    // others (a computer on a desk) above what they sit on.
     k.z(top + obj.height + objectProperty(obj, "zBias", 0)),
     ...(interactive ? ["interactable"] : ["scenery"]),
     {
@@ -94,28 +84,17 @@ export function makeInteractable(obj, map) {
   ]);
 }
 
-/**
- * Reads a Tiled custom property off a map object.
- *
- * Tiled stores these as `properties: [{ name, type, value }]`.
- */
+/** Reads a Tiled custom property (`properties: [{ name, value }]`) off an object. */
 function objectProperty(obj, name, fallback) {
   const found = obj.properties?.find((p) => p.name === name);
   return found === undefined ? fallback : found.value;
 }
 
-/**
- * Shortest distance from a point to a rect (0 when inside).
- *
- * Centre-to-centre would be useless here: the bed is 72px tall, so its centre
- * is further from a player standing against it than the plant's centre is from
- * a player across the room.
- */
+/** Shortest distance from a point to a rect (0 inside). Centre-to-centre would
+ *  be useless — footprints vary too much in size. */
 function distanceToRect(px, py, r) {
-  // The trigger zone extends below the sprite so a player standing on the floor
-  // can reach something mounted high on the wall. Per-object `reachDown` (a
-  // Tiled property) overrides the global default for fussy cases like a window
-  // mounted near the ceiling.
+  // Trigger extends below the sprite so wall-mounted things are reachable from
+  // the floor; per-object `reachDown` overrides the default.
   const bottom = r.y + r.h + (r.reachDown ?? INTERACT_REACH_DOWN);
   const dx = Math.max(r.x - px, 0, px - (r.x + r.w));
   const dy = Math.max(r.y - py, 0, py - bottom);
@@ -123,34 +102,26 @@ function distanceToRect(px, py, r) {
 }
 
 /**
- * Runs the "nearest object shows a prompt, E examines it" loop.
- *
- * One prompt exists at a time and is rebuilt when the target changes (a change
- * happens a few times a second at most, so rebuilding is cheaper than keeping a
- * dynamically-sized rect and text in sync every frame).
- *
+ * The "nearest object shows a prompt, F examines it" loop. One prompt at a time,
+ * rebuilt when the target changes (rare, so cheaper than syncing it every frame).
  * @param {ReturnType<import("./player.js").makePlayer>} player
  */
 export function setupInteractionSystem(player) {
   let currentTarget = null;
   let promptObj = null;
-  /** World point the prompt hovers above, projected to screen space each frame. */
+  /** World point the prompt hovers above, re-projected to screen each frame. */
   let promptAnchor = null;
 
-  // Keys of objects the player has already examined. An object's hint arrow
-  // disappears once examined, so the arrows double as quiet progress: when they
-  // are all gone, the visitor has seen everything.
+  // Examined objects; their hint arrow retires, so the arrows double as progress.
   const examined = new Set();
 
-  // A small bobbing arrow over every interactable, so it reads as "clickable"
-  // without a heads-up list cluttering the screen. fixed() + toScreen keeps it a
-  // fixed pixel size regardless of camera zoom, so it stays small.
+  // A bobbing arrow over every interactable. fixed() + toScreen keeps it a
+  // constant screen size regardless of camera zoom.
   const arrows = k.get("interactable").map((obj) => {
     const anchor = k.vec2(obj.rect.x + obj.rect.w / 2, obj.rect.y - 3);
     const arrow = k.add([
-      // ~12px wide, 8px tall — a golden downward chevron. The tip (0,0)
-      // sits at pos, so it points down at the object. polygon supplies its own
-      // anchor, so no k.anchor() here (that collides and throws).
+      // Golden downward chevron; polygon supplies its own anchor (adding
+      // k.anchor() collides and throws).
       k.polygon([k.vec2(-6, -8), k.vec2(6, -8), k.vec2(0, 0)]),
       k.color(240, 198, 92),
       k.outline(1, k.rgb(40, 30, 12)),
@@ -175,8 +146,7 @@ export function setupInteractionSystem(player) {
     currentTarget = target;
 
     const label = `${INTERACT_KEY_LABEL} · ${target.label}`;
-    // fixed() means these are SCREEN pixels, so the prompt renders at native
-    // resolution instead of being blown up with the rest of the world.
+    // fixed() → screen pixels, so the prompt stays sharp at any zoom.
     const height = UI_PROMPT_SIZE + 10;
     const width = label.length * UI_PROMPT_SIZE * 0.6 + UI_PROMPT_SIZE;
 
@@ -203,12 +173,10 @@ export function setupInteractionSystem(player) {
   function updateArrows(hideAll) {
     const bob = Math.sin(k.time() * 4) * 2;
     for (const arrow of arrows) {
-      // Hidden while an overlay is open, once its object is examined, and while
-      // the player is right next to it (the prompt says the same thing louder).
+      // Hidden under an overlay, once examined, or when it's the current target.
       arrow.hidden =
         hideAll || examined.has(arrow.key) || (currentTarget && currentTarget.key === arrow.key);
-      // Re-project from the world anchor so the fixed-size arrow tracks the
-      // object through camera resizes.
+      // Re-project so the fixed-size arrow tracks the object through resizes.
       const s = k.toScreen(arrow.anchor);
       arrow.pos = k.vec2(s.x, s.y + bob);
     }
@@ -216,17 +184,14 @@ export function setupInteractionSystem(player) {
 
   k.onUpdate(() => {
     if (isUIOpen()) {
-      // Hide the prompt behind an overlay so it does not show through a
-      // dialogue box.
-      if (promptObj) promptObj.hidden = true;
+      if (promptObj) promptObj.hidden = true; // don't show through an overlay
       updateArrows(true);
       return;
     }
     if (promptObj) promptObj.hidden = false;
     updateArrows(false);
 
-    // The prompt lives in screen space, so re-project it from its world anchor.
-    // Cheap, and it keeps the bubble glued to the object across window resizes.
+    // Re-project the screen-space prompt from its world anchor each frame.
     if (promptObj && promptAnchor) promptObj.pos = k.toScreen(promptAnchor);
 
     let nearest = null;
@@ -248,9 +213,7 @@ export function setupInteractionSystem(player) {
 
   const interact = () => {
     if (!currentTarget || isUIOpen() || isInteractCoolingDown()) return;
-
-    // Mark it seen so its hint arrow retires.
-    examined.add(currentTarget.key);
+    examined.add(currentTarget.key); // retire its hint arrow
 
     if (currentTarget.key === "computer") {
       openDesktop();
@@ -262,6 +225,5 @@ export function setupInteractionSystem(player) {
   };
 
   for (const key of INTERACT_KEYS) k.onKeyPress(key, interact);
-  // The on-screen interact button (touch devices) drives the same handler.
-  onVirtualInteract(interact);
+  onVirtualInteract(interact); // on-screen interact button (touch)
 }

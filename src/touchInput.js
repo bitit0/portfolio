@@ -1,9 +1,6 @@
 /**
- * Shared virtual input for on-screen touch controls.
- *
- * The floating joystick writes a movement vector here and the player reads it
- * each frame, exactly alongside the keyboard — so touch support is additive and
- * the movement code never has to know where the input came from. The interact
+ * Shared virtual input for the on-screen touch controls: the joystick writes a
+ * movement vector the player reads alongside the keyboard, and the interact
  * button fires a callback the interaction system registers.
  */
 

@@ -6,8 +6,8 @@ import { Z } from "./constants.js";
  * the tileset with the greatest firstgid <= GID, frame = gid - firstgid, 0 = empty.
  */
 
-/** Tiled packs flip flags into the top 3 bits of the GID; masking them off with
- *  the low 29 bits leaves the plain tile id. (Flips themselves aren't used.) */
+/** Tiled packs flip flags into the top 3 bits of the GID; the low 29 bits are
+ *  the plain tile id. The flip bits are read separately where sprites are drawn. */
 const GID_MASK = 0x1fffffff;
 
 /** Sprite name registered for a tileset, so assets.js and this agree. */
@@ -66,8 +66,14 @@ export function renderTileLayers(map, { aboveLayerName = "above" } = {}) {
       const col = i % layer.width;
       const row = Math.floor(i / layer.width);
 
+      const raw = layer.data[i];
       k.add([
-        k.sprite(resolved.sprite, { frame: resolved.frame }),
+        // Tiled packs horizontal/vertical flip into the gid's top bits.
+        k.sprite(resolved.sprite, {
+          frame: resolved.frame,
+          flipX: Boolean(raw & 0x80000000),
+          flipY: Boolean(raw & 0x40000000),
+        }),
         k.pos(col * tw, row * th),
         k.anchor("topleft"),
         k.z(z),

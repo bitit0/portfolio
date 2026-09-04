@@ -37,19 +37,12 @@ export const DIALOGUE = {
       "Claude · Codex",
     ],
   },
-  // Hobbies shelf — three separate objects sharing one shelf. Add matching rects
-  // in Tiled (small hitboxes) named hobby1 / hobby2 / hobby3, then fill these in.
-  hobby1: {
-    label: "Hobby",
-    lines: ["TODO(nathan): a hobby."],
-  },
-  hobby2: {
-    label: "Hobby",
-    lines: ["TODO(nathan): a hobby."],
-  },
-  hobby3: {
-    label: "Hobby",
-    lines: ["TODO(nathan): a hobby."],
+  stargate: {
+    label: "Stargate",
+    lines: [
+      "The Stargate — the ultimate goal of GregTech: New Horizons, one of my favorite factory modpacks.",
+      "The other side of this one comes out in Tokyo.",
+    ],
   },
   fridge: {
     label: "Fridge",

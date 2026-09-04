@@ -50,8 +50,14 @@ export function makeInteractable(obj, map) {
   const sprite = obj.gid ? spriteForGid(map, obj.gid) : null;
   const top = obj.gid ? obj.y - obj.height : obj.y;
 
+  // Tiled packs horizontal/vertical flip into the top bits of the gid.
+  const flipX = Boolean(obj.gid & 0x80000000);
+  const flipY = Boolean(obj.gid & 0x40000000);
+
   const visual = sprite
-    ? [k.sprite(sprite)]
+    ? // Draw scaled to the object box, so a resized object in Tiled looks the
+      // same in-game (Tiled stretches the tile image to fill the object rect).
+      [k.sprite(sprite, { width: obj.width, height: obj.height, flipX, flipY })]
     : [
         k.rect(obj.width, obj.height, { radius: 2 }),
         k.color(...(OBJECT_COLORS[obj.name] ?? FALLBACK_COLOR)),

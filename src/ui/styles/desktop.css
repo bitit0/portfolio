@@ -152,7 +152,9 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  background: radial-gradient(115% 115% at 26% 16%, #3a63a8 0%, #22396d 44%, #101f3d 100%);
+  background-color: #101a2e; /* fallback while / if background.jpg is absent */
+  background-size: cover;
+  background-position: center;
 }
 
 /* --- Desktop shortcuts (behind the windows) --- */

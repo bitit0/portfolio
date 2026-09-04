@@ -1,5 +1,5 @@
 import { pushLayer, popLayer } from "../uiState.js";
-import { DIALOGUE_CHARS_PER_SECOND, INTERACT_KEYS_DOM } from "../constants.js";
+import { DIALOGUE_CHARS_PER_SECOND, INTERACT_KEYS_DOM, INTERACT_KEY_LABEL } from "../constants.js";
 import { playClick } from "../sfx.js";
 
 /**
@@ -25,7 +25,7 @@ export function openDialogue(entry) {
       <p class="dialogue-label"></p>
       <p class="dialogue-text"></p>
       <div class="dialogue-links" hidden></div>
-      <p class="dialogue-hint">space</p>
+      <p class="dialogue-hint"></p>
     </div>
   `;
   root.hidden = false;
@@ -85,7 +85,7 @@ function renderPage() {
   state.textEl.textContent = "";
   state.typed = 0;
   state.hintEl.dataset.last = String(isLast);
-  state.hintEl.textContent = isLast ? "space to close" : "space";
+  state.hintEl.textContent = isLast ? `${INTERACT_KEY_LABEL} to close` : INTERACT_KEY_LABEL;
 
   // Links belong to the object, not a page, so they land on the last one.
   state.linksEl.hidden = true;

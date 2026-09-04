@@ -6,6 +6,9 @@
 /** @type {{ id: string, label: string }[]} */
 const QUESTS = [{ id: "explore", label: "Explore!" }];
 
+/** @type {HTMLElement | null} */
+let root = null;
+
 export function mountQuestLog() {
   const el = document.createElement("aside");
   el.id = "questlog";
@@ -21,11 +24,16 @@ export function mountQuestLog() {
 
   el.innerHTML = `<h2 class="quest-title">Quests</h2><ul class="quest-list">${items}</ul>`;
   document.body.append(el);
+  root = el;
+}
 
-  return {
-    /** Marks a quest complete (crosses it off). */
-    complete(id) {
-      el.querySelector(`.quest-item[data-quest="${id}"]`)?.classList.add("is-done");
-    },
-  };
+/** Updates a quest's `(current/total)` counter, and marks it done (X in the box,
+ *  label struck through) once current reaches total. No-op if unmounted. */
+export function setQuestProgress(id, current, total) {
+  const item = root?.querySelector(`.quest-item[data-quest="${id}"]`);
+  if (!item) return;
+  const quest = QUESTS.find((q) => q.id === id);
+  const label = item.querySelector(".quest-label");
+  if (label && quest) label.textContent = `${quest.label} (${current}/${total})`;
+  item.classList.toggle("is-done", current >= total);
 }

@@ -88,9 +88,10 @@ export function mountBootScreen() {
         dist[i] = Math.hypot(c - cx, r - cy) / maxD;
         jitter[i] = (Math.random() * 2 - 1) * JITTER;
         glyphs[i] = randChar();
-        const px = Math.min(W - 1, (c * CELL_W + CELL_W / 2) | 0);
-        const py = Math.min(H - 1, (r * CELL_H + CELL_H / 2) | 0);
-        isName[i] = alpha[(py * W + px) * 4 + 3] > 128 ? 1 : 0;
+        // A cell is part of the name only if it's mostly inside a letter (a 3x3
+        // coverage test), so cells that just clip a letter edge don't leave
+        // stray characters around the outline.
+        isName[i] = cellCoverage(alpha, W, H, c, r) >= 6 ? 1 : 0;
       }
     }
     ctx.font = `${CELL_H - 3}px "DejaVu Sans Mono", ui-monospace, monospace`;
@@ -167,4 +168,17 @@ export function mountBootScreen() {
 
 function clamp(v, lo, hi) {
   return v < lo ? lo : v > hi ? hi : v;
+}
+
+/** How many of a cell's 3x3 sample points fall inside the name mask (0-9). */
+function cellCoverage(alpha, W, H, c, r) {
+  let inside = 0;
+  for (let sy = 0; sy < 3; sy++) {
+    for (let sx = 0; sx < 3; sx++) {
+      const px = Math.min(W - 1, (c * CELL_W + ((sx + 0.5) * CELL_W) / 3) | 0);
+      const py = Math.min(H - 1, (r * CELL_H + ((sy + 0.5) * CELL_H) / 3) | 0);
+      if (alpha[(py * W + px) * 4 + 3] > 128) inside++;
+    }
+  }
+  return inside;
 }

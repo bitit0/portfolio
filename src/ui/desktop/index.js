@@ -1,4 +1,5 @@
 import { VFS } from "../../content.js";
+import { asset } from "../../paths.js";
 import { pushLayer, popLayer } from "../../uiState.js";
 import { createWindowManager } from "./windowManager.js";
 import { fileExplorer } from "./apps/fileExplorer.js";
@@ -7,7 +8,10 @@ import { imageViewer } from "./apps/imageViewer.js";
 import { pdfViewer } from "./apps/pdfViewer.js";
 import { browser } from "./apps/browser.js";
 import { mediaPlayer } from "./apps/mediaPlayer.js";
-import { iconFor, childrenOf, sortNodes, idForPath } from "./vfs.js";
+import { iconFor, childrenOf, idForPath } from "./vfs.js";
+
+/** Desktop-shortcut order, curated rather than sorted. Unlisted names sort last. */
+const DESKTOP_ORDER = ["readme.md", "projects", "resume.pdf", "photos", "Email", "GitHub"];
 
 /**
  * The in-game computer: a fake desktop OS over the canvas, rebuilt on each use
@@ -94,6 +98,11 @@ export function openDesktop() {
   `;
   root.hidden = false;
 
+  // Desktop wallpaper. Set via JS so the base URL resolves on a subpath deploy;
+  // if the file is missing the browser falls back to .os-screen's colour.
+  /** @type {HTMLElement} */ (root.querySelector(".os-screen")).style.backgroundImage =
+    `url("${asset("assets/background.jpg")}")`;
+
   const windowLayer = /** @type {HTMLElement} */ (root.querySelector(".os-windows"));
   wm = createWindowManager(windowLayer);
 
@@ -169,7 +178,11 @@ function handleEscape() {
 /** Draws desktop shortcuts (one per top-level entry) behind the window layer.
  *  @param {HTMLElement} container */
 function renderDesktopIcons(container) {
-  for (const node of sortNodes(childrenOf(VFS))) {
+  const rank = (name) => {
+    const i = DESKTOP_ORDER.indexOf(name);
+    return i === -1 ? Infinity : i;
+  };
+  for (const node of [...childrenOf(VFS)].sort((a, b) => rank(a.name) - rank(b.name))) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "os-icon";

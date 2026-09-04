@@ -13,6 +13,7 @@ import { spriteForGid } from "../assets.js";
 import { isUIOpen, isInteractCoolingDown } from "../uiState.js";
 import { onVirtualInteract } from "../touchInput.js";
 import { playClick } from "../sfx.js";
+import { setQuestProgress } from "../ui/questLog.js";
 import { openDialogue } from "../ui/dialogue.js";
 import { openDesktop } from "../ui/desktop/index.js";
 
@@ -212,10 +213,14 @@ export function setupInteractionSystem(player) {
     if (nearest !== currentTarget) showPrompt(nearest);
   });
 
+  const totalInteractables = arrows.length;
+  setQuestProgress("explore", examined.size, totalInteractables); // show 0/N up front
+
   const interact = () => {
     if (!currentTarget || isUIOpen() || isInteractCoolingDown()) return;
     playClick();
     examined.add(currentTarget.key); // retire its hint arrow
+    setQuestProgress("explore", examined.size, totalInteractables);
 
     if (currentTarget.key === "computer") {
       openDesktop();

@@ -25,7 +25,7 @@ export const DIALOGUE = {
   },
   window: {
     label: "Window",
-    lines: ["The city of Boston, buzzing along."],
+    lines: ["Boston, glowing away out there. Never really gets old."],
   },
   shelf: {
     label: "Shelf",
@@ -36,6 +36,20 @@ export const DIALOGUE = {
       "Docker · Git · Windows · Linux",
       "Claude · Codex",
     ],
+  },
+  // Hobbies shelf — three separate objects sharing one shelf. Add matching rects
+  // in Tiled (small hitboxes) named hobby1 / hobby2 / hobby3, then fill these in.
+  hobby1: {
+    label: "Hobby",
+    lines: ["TODO(nathan): a hobby."],
+  },
+  hobby2: {
+    label: "Hobby",
+    lines: ["TODO(nathan): a hobby."],
+  },
+  hobby3: {
+    label: "Hobby",
+    lines: ["TODO(nathan): a hobby."],
   },
   fridge: {
     label: "Fridge",
@@ -57,7 +71,7 @@ export const DIALOGUE = {
   },
   mailbox: {
     label: "Terminal",
-    lines: ["A comms terminal. This is how you reach me."],
+    lines: ["A comms terminal — easily the fastest way to reach me. Don't be a stranger."],
     links: [
       { label: "GitHub", href: "https://github.com/bitit0" },
       { label: "Email", href: "mailto:nathan.ngo44@gmail.com" },
@@ -66,7 +80,7 @@ export const DIALOGUE = {
   },
   door: {
     label: "Door",
-    lines: ["It is not time to touch grass yet."],
+    lines: ["The way out. Not time to touch grass yet — still stuff to do in here."],
   },
 };
 

@@ -201,6 +201,9 @@
 
 .os-icon-label {
   overflow-wrap: anywhere;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgb(12 14 20 / 68%); /* keeps the white label readable over any wallpaper */
 }
 
 /* Windows are absolutely positioned inside this, so it is the drag bounds. */

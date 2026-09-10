@@ -1,6 +1,7 @@
 /**
  * Renders a text node as light markdown — a hand-rolled subset (no dependency)
- * supporting # ## ###, - lists, ``` fences, **bold**, `code`, [text](url).
+ * supporting # ## ###, - lists, ``` fences, **bold**, `code`, [text](url),
+ * ![alt](src) images.
  */
 
 /** @param {import("../../../content.js").VfsNode} node */
@@ -83,6 +84,7 @@ function inline(text) {
   return escapeHtml(text)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img alt="$1" src="$2" loading="lazy" />') // before links
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>');
 }
 

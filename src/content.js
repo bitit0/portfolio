@@ -59,7 +59,7 @@ export const DIALOGUE = {
     label: "Closet",
     lines: [
       "Four identical jackets. Decision fatigue is a real thing.",
-      "Lots of neutral color sweatshirts.",
+      "Lots of neutral color sweatshirts and graphic shirts.",
     ],
   },
   mailbox: {

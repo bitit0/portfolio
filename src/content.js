@@ -229,9 +229,9 @@ export const VFS = {
           body: [
             "# Desktop Automation Suite",
             "",
-            "A collection of AutoHotkey v2 tools that automate a Windows application — the game Diablo IV — by reading the screen and driving it with synthetic input, no process hooks or injected code. Each is a small perception-and-action loop: capture a screen region, interpret it (`Tesseract` OCR or colour matching), decide, then send OS-level keyboard and mouse events.",
+            "A collection of AutoHotkey v2 tools that automate a Windows application by reading the screen and driving it with synthetic input, no process hooks or injected code. Each is a small perception-and-action loop: capture a screen region, interpret it (`Tesseract` OCR or colour matching), decide, then send OS-level keyboard and mouse events.",
             "",
-            "- Reads on-screen text with OCR to drive a search-until-match loop, replacing manual trial and error.",
+            "- Reads on-screen text with OCR to drive a search-until-match loop, replacing manual trial and error. Fine-tuned to cycle at GUI limit speed.",
             "- Detects visual state changes and reacts with randomized, human-like timing; a watchdog auto-recovers from crashes and disconnects and alerts over a webhook, so it ran unattended for hundreds of hours.",
             "- Replays precise, timed UI sequences from a single hotkey.",
             "",

@@ -6,8 +6,10 @@
  * click/key; respects prefers-reduced-motion.
  */
 
-const CELL_W = 13; // px per glyph column
-const CELL_H = 17; // px per glyph row
+const BASE_CELL_W = 13; // px per glyph column at desktop scale
+const BASE_CELL_H = 17; // px per glyph row at desktop scale
+let CELL_W = BASE_CELL_W; // shrunk on small screens (see resize) so the name
+let CELL_H = BASE_CELL_H; // maps onto enough cells to stay legible
 const REVEAL_MS = 2600; // time for the field to collapse into the name
 const EDGE = 0.08; // how long an individual character takes to fade out
 const JITTER = 0.18; // per-cell randomness in fade timing (ragged, not a clean ring)
@@ -55,8 +57,6 @@ export function mountBootScreen() {
   function resize() {
     const W = (canvas.width = Math.max(1, window.innerWidth));
     const H = (canvas.height = Math.max(1, window.innerHeight));
-    cols = Math.max(1, Math.ceil(W / CELL_W));
-    rows = Math.max(1, Math.ceil(H / CELL_H));
 
     // Render the name to an offscreen mask, sized to fit, to learn which cells
     // sit inside its letters.
@@ -77,6 +77,15 @@ export function mountBootScreen() {
     mctx.fillText("Nathan Ngo", W / 2, H / 2);
     const alpha = mctx.getImageData(0, 0, W, H).data;
 
+    // Scale the glyph grid down with the font so the name always spans the same
+    // number of cells. At a phone's small font a fixed 13px grid maps the
+    // letters onto too few cells and they read as scattered noise, not a name.
+    const scale = clamp(size / 150, 0.3, 1); // 150px ≈ the desktop font size
+    CELL_W = Math.round(BASE_CELL_W * scale);
+    CELL_H = Math.round(BASE_CELL_H * scale);
+    cols = Math.max(1, Math.ceil(W / CELL_W));
+    rows = Math.max(1, Math.ceil(H / CELL_H));
+
     dist = new Float32Array(cols * rows);
     jitter = new Float32Array(cols * rows);
     isName = new Uint8Array(cols * rows);
@@ -96,7 +105,7 @@ export function mountBootScreen() {
         isName[i] = cellCoverage(alpha, W, H, c, r) >= 6 ? 1 : 0;
       }
     }
-    ctx.font = `${CELL_H - 3}px "DejaVu Sans Mono", ui-monospace, monospace`;
+    ctx.font = `${Math.max(4, CELL_H - 3)}px "DejaVu Sans Mono", ui-monospace, monospace`;
     ctx.textBaseline = "top";
     ctx.textAlign = "left";
   }
@@ -149,7 +158,7 @@ export function mountBootScreen() {
     ctx.globalAlpha = 1;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.font = `${CELL_H - 3}px "DejaVu Sans Mono", ui-monospace, monospace`;
+    ctx.font = `${Math.max(4, CELL_H - 3)}px "DejaVu Sans Mono", ui-monospace, monospace`;
   }
 
   if (reduce) {

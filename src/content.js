@@ -30,7 +30,7 @@ export const DIALOGUE = {
   shelf: {
     label: "Shelf",
     lines: [
-      "Your tools, in rough order of hours logged:",
+      "Your tools, in rough order of hours used:",
       "Python · C# · C++ · Java",
       "JavaScript · React · TypeScript",
       "Docker · Git · Windows · Linux",
@@ -41,7 +41,7 @@ export const DIALOGUE = {
     label: "Stargate",
     lines: [
       "The Stargate — the ultimate goal of GregTech: New Horizons, one of my favorite factory modpacks.",
-      "The other side of this one comes out in Tokyo.",
+      "The other side of this one comes out in Tokyo, Japan.",
     ],
   },
   fridge: {

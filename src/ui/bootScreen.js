@@ -38,7 +38,9 @@ export function mountBootScreen() {
     boot.classList.add("boot-out");
     boot.addEventListener("transitionend", () => boot.remove(), { once: true });
     setTimeout(() => boot.remove(), 800); // belt-and-braces if no transitionend
-    document.getElementById("game")?.focus();
+    // Defer a tick: a click's default focus (to body) runs after this handler
+    // and would otherwise steal focus back off the canvas.
+    setTimeout(() => document.getElementById("game")?.focus(), 0);
   }
   boot.addEventListener("pointerdown", dismiss);
   window.addEventListener("keydown", dismiss);
